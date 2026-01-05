@@ -22,6 +22,9 @@ DB_CONNECTION=sqlite
 <!-- to -->
 DB_CONNECTION=mysql
 
+<!-- Run Project -->
+npm run dev
+php artisan serve
 
 
 

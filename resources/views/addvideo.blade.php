@@ -32,7 +32,22 @@
         <section class="py-8 pb-16">
             <div class="container mx-auto px-4">
                 <div class="form-card">
-                    <form id="addVideoForm">
+                    
+                    <!-- Display Validation Errors -->
+                    @if ($errors->any())
+                        <div class="alert alert-error mb-6 bg-red-500/20 border border-red-500 text-red-400 p-4 rounded-lg">
+                            <strong>Please fix the following errors:</strong>
+                            <ul class="mt-2">
+                                @foreach ($errors->all() as $error)
+                                    <li>• {{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <form method="POST" action="{{ route('admin.storevideo') }}" enctype="multipart/form-data">
+                        @csrf
+
                         <!-- Thumbnail Upload -->
                         <div class="mb-6">
                             <label class="form-label">
@@ -74,8 +89,9 @@
                                     type="text" 
                                     id="videoName" 
                                     name="videoName" 
-                                    class="input form-input w-full" 
+                                    class="input form-input w-full @error('videoName') error @enderror" 
                                     placeholder="Enter video name"
+                                    value="{{ old('videoName') }}"
                                     required
                                 />
                             </div>
@@ -89,8 +105,9 @@
                                     type="text" 
                                     id="artist" 
                                     name="artist" 
-                                    class="input form-input w-full" 
+                                    class="input form-input w-full @error('artist') error @enderror" 
                                     placeholder="Enter artist name"
+                                    value="{{ old('artist') }}"
                                     required
                                 />
                             </div>
@@ -104,8 +121,9 @@
                                     type="text" 
                                     id="album" 
                                     name="album" 
-                                    class="input form-input w-full" 
+                                    class="input form-input w-full @error('album') error @enderror" 
                                     placeholder="Enter album name"
+                                    value="{{ old('album') }}"
                                     required
                                 />
                             </div>
@@ -115,25 +133,11 @@
                                 <label for="year" class="form-label">
                                     Year <span class="required">*</span>
                                 </label>
-                                <select id="year" name="year" class="select form-input w-full" required>
+                                <select id="year" name="year" class="select form-input w-full @error('year') error @enderror" required>
                                     <option value="" disabled selected>Select Year</option>
-                                    <option value="2026">2026</option>
-                                    <option value="2025">2025</option>
-                                    <option value="2024">2024</option>
-                                    <option value="2023">2023</option>
-                                    <option value="2022">2022</option>
-                                    <option value="2021">2021</option>
-                                    <option value="2020">2020</option>
-                                    <option value="2019">2019</option>
-                                    <option value="2018">2018</option>
-                                    <option value="2017">2017</option>
-                                    <option value="2016">2016</option>
-                                    <option value="2015">2015</option>
-                                    <option value="2014">2014</option>
-                                    <option value="2013">2013</option>
-                                    <option value="2012">2012</option>
-                                    <option value="2011">2011</option>
-                                    <option value="2010">2010</option>
+                                    @for ($y = date('Y'); $y >= 2000; $y--)
+                                        <option value="{{ $y }}" {{ old('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
+                                    @endfor
                                 </select>
                             </div>
 
@@ -142,19 +146,19 @@
                                 <label for="genre" class="form-label">
                                     Genre <span class="required">*</span>
                                 </label>
-                                <select id="genre" name="genre" class="select form-input w-full" required>
+                                <select id="genre" name="genre" class="select form-input w-full @error('genre') error @enderror" required>
                                     <option value="" disabled selected>Select Genre</option>
-                                    <option value="Pop">Pop</option>
-                                    <option value="Rock">Rock</option>
-                                    <option value="Hip Hop">Hip Hop</option>
-                                    <option value="Jazz">Jazz</option>
-                                    <option value="Classical">Classical</option>
-                                    <option value="Electronic">Electronic</option>
-                                    <option value="Folk">Folk</option>
-                                    <option value="Romantic">Romantic</option>
-                                    <option value="Bhangra">Bhangra</option>
-                                    <option value="Dance">Dance</option>
-                                    <option value="Concert">Concert</option>
+                                    <option value="Pop" {{ old('genre') == 'Pop' ? 'selected' : '' }}>Pop</option>
+                                    <option value="Rock" {{ old('genre') == 'Rock' ? 'selected' : '' }}>Rock</option>
+                                    <option value="Hip Hop" {{ old('genre') == 'Hip Hop' ? 'selected' : '' }}>Hip Hop</option>
+                                    <option value="Jazz" {{ old('genre') == 'Jazz' ? 'selected' : '' }}>Jazz</option>
+                                    <option value="Classical" {{ old('genre') == 'Classical' ? 'selected' : '' }}>Classical</option>
+                                    <option value="Electronic" {{ old('genre') == 'Electronic' ? 'selected' : '' }}>Electronic</option>
+                                    <option value="Folk" {{ old('genre') == 'Folk' ? 'selected' : '' }}>Folk</option>
+                                    <option value="Romantic" {{ old('genre') == 'Romantic' ? 'selected' : '' }}>Romantic</option>
+                                    <option value="Bhangra" {{ old('genre') == 'Bhangra' ? 'selected' : '' }}>Bhangra</option>
+                                    <option value="Dance" {{ old('genre') == 'Dance' ? 'selected' : '' }}>Dance</option>
+                                    <option value="Concert" {{ old('genre') == 'Concert' ? 'selected' : '' }}>Concert</option>
                                 </select>
                             </div>
 
@@ -163,10 +167,12 @@
                                 <label for="language" class="form-label">
                                     Language <span class="required">*</span>
                                 </label>
-                                <select id="language" name="language" class="select form-input w-full" required>
+                                <select id="language" name="language" class="select form-input w-full @error('language') error @enderror" required>
                                     <option value="" disabled selected>Select Language</option>
-                                    <option value="English">English</option>
-                                    <option value="Urdu">Urdu</option>
+                                    <option value="English" {{ old('language') == 'English' ? 'selected' : '' }}>English</option>
+                                    <option value="Urdu" {{ old('language') == 'Urdu' ? 'selected' : '' }}>Urdu</option>
+                                    <option value="Hindi" {{ old('language') == 'Hindi' ? 'selected' : '' }}>Hindi</option>
+                                    <option value="Punjabi" {{ old('language') == 'Punjabi' ? 'selected' : '' }}>Punjabi</option>
                                 </select>
                             </div>
 
@@ -179,13 +185,25 @@
                                     type="text" 
                                     id="duration" 
                                     name="duration" 
-                                    class="input form-input w-full" 
+                                    class="input form-input w-full @error('duration') error @enderror" 
                                     placeholder="e.g., 45:32"
+                                    value="{{ old('duration') }}"
                                     required
                                 />
                             </div>
                         </div>
 
+                        <!-- Description (Optional) -->
+                        <div class="mb-6">
+                            <label for="description" class="form-label">Description (Optional)</label>
+                            <textarea 
+                                id="description" 
+                                name="description" 
+                                class="textarea form-input w-full" 
+                                rows="3"
+                                placeholder="Enter video description"
+                            >{{ old('description') }}</textarea>
+                        </div>
 
                         <!-- Buttons -->
                         <div class="flex gap-4">
@@ -195,18 +213,18 @@
                                 </svg>
                                 Add Video
                             </button>
-                            <button type="button" class="btn btn-outline flex-1" onclick="window.history.back()">
+                            <a href="{{ route('admin.dashboard') }}" class="btn btn-outline flex-1">
                                 Cancel
-                            </button>
+                            </a>
                         </div>
                     </form>
                 </div>
             </div>
         </section>
 
-        <!-- Footer start  -->
+        <!-- Footer start -->
         <x-footer />
-        <!-- Footer end  -->
+        <!-- Footer end -->
     </div>
 
     <script>
@@ -231,34 +249,6 @@
                 document.getElementById('fileNameDisplay').textContent = file.name;
             }
         }
-
-        // Form submission
-        document.getElementById('addVideoForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = new FormData(this);
-            
-            // In production, send data to server
-            console.log('Video data:', {
-                thumbnail: formData.get('thumbnail').name,
-                videoFile: formData.get('videoFile').name,
-                videoName: formData.get('videoName'),
-                artist: formData.get('artist'),
-                album: formData.get('album'),
-                year: formData.get('year'),
-                genre: formData.get('genre'),
-                language: formData.get('language'),
-                duration: formData.get('duration'),
-                description: formData.get('description'),
-                markAsNew: formData.get('markAsNew') ? true : false
-            });
-            
-            alert('Video added successfully! (This is a demo)');
-            
-            // Redirect to admin dashboard
-            // window.location.href = '/admin/dashboard';
-        });
     </script>
 </body>
 </html>

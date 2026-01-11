@@ -1,56 +1,64 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\Auth\AdminController;
 
-// Main Pages
+
 Route::get('/', function () {
     return view('home');
-});
+})->name('home');
 
 Route::get('/Music', function () {
     return view('music');
-});
+})->name('music');
 
 Route::get('/Videos', function () {
     return view('video');
-});
+})->name('videos');
 
 Route::get('/About', function () {
     return view('about');
+})->name('about');
+
+
+Route::middleware('guest')->group(function () {
+    // Login
+    Route::get('/Login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/Login', [LoginController::class, 'login'])->name('login.post');
+    
+    // Register
+    Route::get('/Register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/Register', [RegisterController::class, 'register'])->name('register.post');
 });
 
-Route::get('/Login', function () {
-    return view('login');
+// Logout (Authenticated Users Only)
+Route::post('/Logout', [LoginController::class, 'logout'])->name('logout')->middleware('auth');
+
+
+Route::middleware(['auth', 'role:user'])->prefix('Dashboard/User')->group(function () {
+    Route::get('/', [UserController::class, 'dashboard'])->name('user.dashboard');
+    Route::get('/Edit', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('/Update', [UserController::class, 'update'])->name('user.update');
 });
 
-Route::get('/Register', function () {
-    return view('register');
+
+Route::middleware(['auth', 'role:admin'])->prefix('Dashboard/Admin')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    
+    // Music Management
+    Route::get('/Add-Music', [AdminController::class, 'addMusic'])->name('admin.addmusic');
+    Route::post('/Add-Music', [AdminController::class, 'storeMusic'])->name('admin.storemusic');
+    Route::delete('/Music/{id}', [AdminController::class, 'deleteMusic'])->name('admin.deletemusic');
+    
+    // Video Management
+    Route::get('/Add-Video', [AdminController::class, 'addVideo'])->name('admin.addvideo');
+    Route::post('/Add-Video', [AdminController::class, 'storeVideo'])->name('admin.storevideo');
+    Route::delete('/Video/{id}', [AdminController::class, 'deleteVideo'])->name('admin.deletevideo');
+    
+    // User Management
+    Route::get('/Manage-Users', [AdminController::class, 'manageUsers'])->name('admin.manageusers');
+    Route::delete('/Users/{id}', [AdminController::class, 'deleteUser'])->name('admin.deleteuser');
 });
-
-
-// User dash and edit
-Route::get('/Dashboard/User', function () {
-    return view('userdash');
-});
-
-Route::get('/Dashboard/User/Edit', function () {
-    return view('useredit');
-});
-
-// Admin dash
-Route::get('/Dashboard/Admin', function () {
-    return view('admindash');
-});
-
-Route::get('/Dashboard/Admin/Add-Music', function () {
-    return view('addmusic');
-});
-
-Route::get('/Dashboard/Admin/Add-Video', function () {
-    return view('addvideo');
-});
-
-Route::get('/Dashboard/Admin/Manage-Users', function () {
-    return view('manageusers');
-});
-

@@ -32,8 +32,36 @@
         <section class="py-8">
             <div class="container mx-auto px-4">
 
+                <!-- Success Message -->
+                @if (session('success'))
+                    <div class="alert alert-success mb-6 bg-green-500/20 border border-green-500 text-green-400 p-4 rounded-lg">
+                        ✓ {{ session('success') }}
+                    </div>
+                @endif
+
+                <!-- Statistics Cards -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="stat-card rounded-2xl p-6 text-center">
+                        <div class="text-4xl font-bold display-font text-purple-400 mb-2">{{ $stats['total_users'] ?? 0 }}</div>
+                        <div class="text-gray-400">Total Users</div>
+                    </div>
+                    <div class="stat-card rounded-2xl p-6 text-center">
+                        <div class="text-4xl font-bold display-font text-pink-400 mb-2">{{ $stats['total_music'] ?? 0 }}</div>
+                        <div class="text-gray-400">Music Tracks</div>
+                    </div>
+                    <div class="stat-card rounded-2xl p-6 text-center">
+                        <div class="text-4xl font-bold display-font text-purple-400 mb-2">{{ $stats['total_videos'] ?? 0 }}</div>
+                        <div class="text-gray-400">Videos</div>
+                    </div>
+                    <div class="stat-card rounded-2xl p-6 text-center">
+                        <div class="text-4xl font-bold display-font text-pink-400 mb-2">{{ $stats['total_categories'] ?? 0 }}</div>
+                        <div class="text-gray-400">Categories</div>
+                    </div>
+                </div>
+
                 <!-- Quick Actions -->
                 <div class="section-card mb-8">
+                    <h2 class="section-title display-font mb-6">QUICK ACTIONS</h2>
                     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- Add Music -->
                         <div class="action-card">
@@ -44,7 +72,7 @@
                             </div>
                             <h3 class="font-bold text-lg mb-2">Add Music</h3>
                             <p class="text-sm text-gray-400 mb-4">Upload new music files</p>
-                            <a href="{{ url('/Dashboard/Admin/Add-Music') }}" class="btn btn-gradient btn-sm text-white">Add Music</a>
+                            <a href="{{ route('admin.addmusic') }}" class="btn btn-gradient btn-sm text-white">Add Music</a>
                         </div>
 
                         <!-- Add Video -->
@@ -56,7 +84,7 @@
                             </div>
                             <h3 class="font-bold text-lg mb-2">Add Video</h3>
                             <p class="text-sm text-gray-400 mb-4">Upload new video files</p>
-                            <a href="{{ url('/Dashboard/Admin/Add-Video') }}" class="btn btn-gradient btn-sm text-white">Add Video</a>
+                            <a href="{{ route('admin.addvideo') }}" class="btn btn-gradient btn-sm text-white">Add Video</a>
                         </div>
 
                         <!-- Manage Categories -->
@@ -68,7 +96,7 @@
                             </div>
                             <h3 class="font-bold text-lg mb-2">Manage Categories</h3>
                             <p class="text-sm text-gray-400 mb-4">Create & manage categories</p>
-                            <button class="btn btn-gradient btn-sm text-white">Manage</button>
+                            <button class="btn btn-gradient btn-sm text-white" onclick="alert('Coming soon!')">Manage</button>
                         </div>
 
                         <!-- Manage Users -->
@@ -80,7 +108,25 @@
                             </div>
                             <h3 class="font-bold text-lg mb-2">Manage Users</h3>
                             <p class="text-sm text-gray-400 mb-4">View & manage user accounts</p>
-                            <a href="{{ url('/Dashboard/Admin/Manage-Users') }}" class="btn btn-gradient btn-sm text-white">Manage</a>
+                            <a href="{{ route('admin.manageusers') }}" class="btn btn-gradient btn-sm text-white">Manage</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Activity (Optional - You can add this later) -->
+                <div class="section-card mb-8">
+                    <h2 class="section-title display-font mb-6">RECENT ACTIVITY</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
+                            <div class="text-purple-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-semibold">System is running smoothly</p>
+                                <p class="text-sm text-gray-400">All services are operational</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -88,9 +134,9 @@
             </div>
         </section>
 
-        <!-- Footer start  -->
+        <!-- Footer start -->
         <x-footer />
-        <!-- Footer end  -->
+        <!-- Footer end -->
     </div>
 </body>
 </html>

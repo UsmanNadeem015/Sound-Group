@@ -30,9 +30,17 @@
         <!-- Dashboard Content -->
         <section class="py-8">
             <div class="container mx-auto px-4">
+                
+                <!-- Success Message -->
+                @if (session('success'))
+                    <div class="alert alert-success mb-6 bg-green-500/20 border border-green-500 text-green-400 p-4 rounded-lg">
+                        ✓ {{ session('success') }}
+                    </div>
+                @endif
+
                 <!-- Welcome Card -->
                 <div class="section-card mb-8">
-                    <h2 class="section-title display-font mb-4">WELCOME, Usman939!</h2>
+                    <h2 class="section-title display-font mb-4">WELCOME, {{ $user->name }}!</h2>
                     <p class="text-gray-300 text-lg">Glad to have you back. Explore and enjoy your favorite music and videos.</p>
                 </div>
 
@@ -40,38 +48,41 @@
                 <div class="section-card mb-8">
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="section-title display-font">MY PROFILE</h2>
-                        <a href="{{ url('/Dashboard/User/Edit') }}" class="btn btn-gradient text-white">Edit Profile</a>
+                        <a href="{{ route('user.edit') }}" class="btn btn-gradient text-white">Edit Profile</a>
                     </div>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm text-gray-400 mb-2">Full Name</label>
-                            <p class="text-lg font-semibold">Usman Nadeem</p>
+                            <p class="text-lg font-semibold">{{ $user->name }}</p>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-400 mb-2">Email Address</label>
-                            <p class="text-lg font-semibold">usmannadeem015@gmail.com</p>
+                            <p class="text-lg font-semibold">{{ $user->email }}</p>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-400 mb-2">Phone Number</label>
-                            <p class="text-lg font-semibold">03318393259</p>
+                            <p class="text-lg font-semibold">{{ $user->phone }}</p>
                         </div>
                         <div>
                             <label class="block text-sm text-gray-400 mb-2">User ID</label>
-                            <p class="text-lg font-semibold">01</p>
+                            <p class="text-lg font-semibold">#{{ str_pad($user->id, 4, '0', STR_PAD_LEFT) }}</p>
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm text-gray-400 mb-2">Address</label>
-                            <p class="text-lg font-semibold">Nasa space station</p>
+                            <p class="text-lg font-semibold">{{ $user->address }}</p>
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm text-gray-400 mb-2">Member Since</label>
+                            <p class="text-lg font-semibold">{{ $user->created_at->format('F d, Y') }}</p>
                         </div>
                     </div>
                 </div>
-
             </div>
         </section>
 
-        <!-- Footer start  -->
+        <!-- Footer start -->
         <x-footer />
-        <!-- Footer end  -->
+        <!-- Footer end -->
     </div>
 </body>
 </html>

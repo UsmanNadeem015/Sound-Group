@@ -5,6 +5,10 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\AdminController;
+use App\Http\Controllers\Admin\MusicController;
+use App\Http\Controllers\Admin\VideoController;
+use App\Http\Controllers\MusicFetchController;
+
 
 
 Route::get('/', function () {
@@ -50,15 +54,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('Dashboard/Admin')->group(func
     
     // Music Management
     Route::get('/Add-Music', [AdminController::class, 'addMusic'])->name('admin.addmusic');
-    Route::post('/Add-Music', [AdminController::class, 'storeMusic'])->name('admin.storemusic');
+    Route::post('/Add-Music', [MusicController::class, 'store'])->name('admin.storemusic');
     Route::delete('/Music/{id}', [AdminController::class, 'deleteMusic'])->name('admin.deletemusic');
     
     // Video Management
     Route::get('/Add-Video', [AdminController::class, 'addVideo'])->name('admin.addvideo');
-    Route::post('/Add-Video', [AdminController::class, 'storeVideo'])->name('admin.storevideo');
+    Route::post('/Add-Video', [VideoController::class, 'store'])->name('admin.storevideo');
     Route::delete('/Video/{id}', [AdminController::class, 'deleteVideo'])->name('admin.deletevideo');
     
     // User Management
     Route::get('/Manage-Users', [AdminController::class, 'manageUsers'])->name('admin.manageusers');
     Route::delete('/Users/{id}', [AdminController::class, 'deleteUser'])->name('admin.deleteuser');
 });
+
+Route::get('/Music', [MusicFetchController::class, 'index'])->name('music');

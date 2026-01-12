@@ -3,6 +3,8 @@
 npm install
 composer install
 composer require laravel/sanctum
+php artisan storage:link
+
 
 
 <!--  Only do this part if after running composer install it throws an error -->

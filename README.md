@@ -2,6 +2,8 @@
 <!-- To Run this project after downloading/cloning it from gitub run these -->
 npm install
 composer install
+composer require laravel/sanctum
+
 
 <!--  Only do this part if after running composer install it throws an error -->
 <!--  close VS code -->

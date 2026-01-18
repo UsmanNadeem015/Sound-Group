@@ -120,12 +120,23 @@
     </div>
 </div>
 
-                            <!-- Language -->
-                            <div class="form-group">
-                                <label class="form-label">Language *</label>
-                                <input type="text" name="language" class="input input-bordered w-full" value="{{ old('language', $music->language) }}" required>
-                            </div>
-                        </div>
+<!-- Language -->
+<div class="form-group">
+    <label class="form-label">Language *</label>
+    <select name="language" class="select select-bordered w-full" required>
+        <option value="" disabled selected>Select a language</option>
+        @foreach(\App\Models\Category::where('type', 'language')->where('is_active', true)->orderBy('name')->get() as $language)
+            <option value="{{ $language->name }}" {{ old('language') == $language->name ? 'selected' : '' }}>
+                {{ $language->name }}
+            </option>
+        @endforeach
+        <option value="custom">+ Add New Language</option>
+    </select>
+    <!-- Hidden input for custom language -->
+    <div id="customLanguageContainer" class="hidden mt-2">
+        <input type="text" name="custom_language" class="input input-bordered w-full" placeholder="Enter new language name">
+    </div>
+</div>
 
                         <!-- Description -->
                         <div class="form-group mt-6">
@@ -160,6 +171,26 @@ document.querySelector('select[name="genre"]').addEventListener('change', functi
     } else {
         customContainer.classList.add('hidden');
     }
+
+    // Handle custom language selection
+const languageSelect = document.querySelector('select[name="language"]');
+const customLanguageContainer = document.getElementById('customLanguageContainer');
+
+if (languageSelect && customLanguageContainer) {
+    // Check initial value
+    if (languageSelect.value === 'custom') {
+        customLanguageContainer.classList.remove('hidden');
+    }
+    
+    // Handle change event
+    languageSelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customLanguageContainer.classList.remove('hidden');
+        } else {
+            customLanguageContainer.classList.add('hidden');
+        }
+    });
+}
 });
 </script>
 </body>

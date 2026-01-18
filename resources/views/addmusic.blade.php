@@ -159,20 +159,23 @@
     </div>
 </div>
 
-                            <!-- Language -->
-                            <div class="mb-4">
-                                <label for="language" class="form-label">
-                                    Language <span class="required">*</span>
-                                </label>
-                                <select id="language" name="language" class="select form-input w-full @error('language') error @enderror" required>
-                                    <option value="" disabled selected>Select Language</option>
-                                    <option value="English" {{ old('language') == 'English' ? 'selected' : '' }}>English</option>
-                                    <option value="Urdu" {{ old('language') == 'Urdu' ? 'selected' : '' }}>Urdu</option>
-                                    <option value="Hindi" {{ old('language') == 'Hindi' ? 'selected' : '' }}>Hindi</option>
-                                    <option value="Punjabi" {{ old('language') == 'Punjabi' ? 'selected' : '' }}>Punjabi</option>
-                                </select>
-                            </div>
-                        </div>
+<!-- Language -->
+<div class="form-group">
+    <label class="form-label">Language *</label>
+    <select name="language" class="select select-bordered w-full" required>
+        <option value="" disabled selected>Select a language</option>
+        @foreach(\App\Models\Category::where('type', 'language')->where('is_active', true)->orderBy('name')->get() as $language)
+            <option value="{{ $language->name }}" {{ old('language') == $language->name ? 'selected' : '' }}>
+                {{ $language->name }}
+            </option>
+        @endforeach
+        <option value="custom">+ Add New Language</option>
+    </select>
+    <!-- Hidden input for custom language -->
+    <div id="customLanguageContainer" class="hidden mt-2">
+        <input type="text" name="custom_language" class="input input-bordered w-full" placeholder="Enter new language name">
+    </div>
+</div>
 
 <!-- Duration -->
 <div class="form-group">
@@ -247,6 +250,26 @@
         customContainer.classList.add('hidden');
     }
 });
+
+// Handle custom language selection
+const languageSelect = document.querySelector('select[name="language"]');
+const customLanguageContainer = document.getElementById('customLanguageContainer');
+
+if (languageSelect && customLanguageContainer) {
+    // Check initial value
+    if (languageSelect.value === 'custom') {
+        customLanguageContainer.classList.remove('hidden');
+    }
+    
+    // Handle change event
+    languageSelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customLanguageContainer.classList.remove('hidden');
+        } else {
+            customLanguageContainer.classList.add('hidden');
+        }
+    });
+}
     </script>
 
 

@@ -67,25 +67,21 @@
                             <p class="text-sm text-gray-400 mt-1">This will appear in dropdown menus</p>
                         </div>
 
-                        <!-- Category Type -->
-                        <div class="form-group mb-6">
-                            <label class="form-label">Category Type *</label>
-                            <select name="type" class="select select-bordered w-full" required>
-                                <option value="" disabled selected>Select a type</option>
-                                @foreach($categoryTypes as $type)
-                                    <option value="{{ $type }}" {{ old('type') == $type ? 'selected' : '' }}>
-                                        {{ ucfirst($type) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <p class="text-sm text-gray-400 mt-1">
-                                <strong>Genre:</strong> Music/Video style (Pop, Rock, Jazz)<br>
-                                <strong>Year:</strong> Release year (2024, 2023)<br>
-                                <strong>Artist:</strong> Performer name<br>
-                                <strong>Album:</strong> Album/Collection name<br>
-                                <strong>Language:</strong> Content language
-                            </p>
-                        </div>
+<!-- Category Type -->
+<div class="form-group mb-6">
+    <label class="form-label">Category Type *</label>
+    <select name="type" class="select select-bordered w-full" required>
+        <option value="" disabled selected>Select a type</option>
+        <option value="genre" {{ old('type') == 'genre' ? 'selected' : '' }}>Genre</option>
+        <option value="year" {{ old('type') == 'year' ? 'selected' : '' }}>Year</option>
+        <option value="language" {{ old('type') == 'language' ? 'selected' : '' }}>Language</option>
+    </select>
+    <p class="text-sm text-gray-400 mt-1">
+        <strong>Genre:</strong> Music/Video style (Pop, Rock, Jazz)<br>
+        <strong>Year:</strong> Release year (2024, 2023)<br>
+        <strong>Language:</strong> Content language (English, Hindi, Spanish)
+    </p>
+</div>
 
                         <!-- Description (Optional) -->
                         <div class="form-group mb-8">

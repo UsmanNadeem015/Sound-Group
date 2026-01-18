@@ -73,10 +73,21 @@ public function storeMusic(Request $request)
     if ($request->genre === 'custom' && $request->has('custom_genre')) {
         $validatedData['genre'] = $request->custom_genre;
         
-        // Also auto-create the category in database
+    // Also auto-create the category in database
         $category = Category::firstOrCreate(
             ['name' => $request->custom_genre, 'type' => 'genre'],
             ['slug' => Str::slug($request->custom_genre), 'is_active' => true]
+        );
+    }
+
+    // Handle custom language if selected
+        if ($request->language === 'custom' && $request->has('custom_language')) {
+        $validatedData['language'] = $request->custom_language;
+    
+    // Also auto-create the category in database
+        $category = Category::firstOrCreate(
+            ['name' => $request->custom_language, 'type' => 'language'],
+            ['slug' => Str::slug($request->custom_language), 'is_active' => true]
         );
     }
 
@@ -311,6 +322,17 @@ public function updateVideo(Request $request, $id)
         );
     }
 
+    // Handle custom language if selected
+        if ($request->language === 'custom' && $request->has('custom_language')) {
+            $validatedData['language'] = $request->custom_language;
+    
+    // Also auto-create the category in database
+        $category = Category::firstOrCreate(
+            ['name' => $request->custom_language, 'type' => 'language'],
+            ['slug' => Str::slug($request->custom_language), 'is_active' => true]
+        );
+    }
+
     // Update thumbnail if provided
     if ($request->hasFile('thumbnail')) {
         // Delete old thumbnail
@@ -430,25 +452,44 @@ private function attachMusicCategories($music, $data)
         $categoryIds[] = $cat->id;
     }
 
-    // Artist
-    if (isset($data['artist'])) {
+    // Genre (already handled in storeMusic/updateMusic)
+    if (isset($data['genre'])) {
         $cat = Category::firstOrCreate(
-            ['name' => $data['artist'], 'type' => 'artist'],
-            ['slug' => Str::slug($data['artist']), 'is_active' => true]
+            ['name' => $data['genre'], 'type' => 'genre'],
+            ['slug' => Str::slug($data['genre']), 'is_active' => true]
         );
         $categoryIds[] = $cat->id;
     }
 
-    // Album
-    if (isset($data['album'])) {
+    // Language (already handled in storeMusic/updateMusic)
+    if (isset($data['language'])) {
         $cat = Category::firstOrCreate(
-            ['name' => $data['album'], 'type' => 'album'],
-            ['slug' => Str::slug($data['album']), 'is_active' => true]
+            ['name' => $data['language'], 'type' => 'language'],
+            ['slug' => Str::slug($data['language']), 'is_active' => true]
         );
         $categoryIds[] = $cat->id;
     }
 
-    // Genre (this is already handled in storeMusic/updateMusic, but just in case)
+    $music->categories()->sync($categoryIds);
+}
+
+    /**
+     * Helper: Attach categories to video
+     */
+private function attachVideoCategories($video, $data)
+{
+    $categoryIds = [];
+
+    // Year
+    if (isset($data['year'])) {
+        $cat = Category::firstOrCreate(
+            ['name' => $data['year'], 'type' => 'year'],
+            ['slug' => Str::slug($data['year']), 'is_active' => true]
+        );
+        $categoryIds[] = $cat->id;
+    }
+
+    // Genre (already handled in storeVideo/updateVideo)
     if (isset($data['genre'])) {
         $cat = Category::firstOrCreate(
             ['name' => $data['genre'], 'type' => 'genre'],
@@ -466,63 +507,8 @@ private function attachMusicCategories($music, $data)
         $categoryIds[] = $cat->id;
     }
 
-    $music->categories()->sync($categoryIds);
+    $video->categories()->sync($categoryIds);
 }
-
-    /**
-     * Helper: Attach categories to video
-     */
-    private function attachVideoCategories($video, $data)
-    {
-        $categoryIds = [];
-
-        // Year
-        if (isset($data['year'])) {
-            $cat = Category::firstOrCreate(
-                ['name' => $data['year'], 'type' => 'year'],
-                ['slug' => Str::slug($data['year']), 'is_active' => true]
-            );
-            $categoryIds[] = $cat->id;
-        }
-
-        // Artist
-        if (isset($data['artist'])) {
-            $cat = Category::firstOrCreate(
-                ['name' => $data['artist'], 'type' => 'artist'],
-                ['slug' => Str::slug($data['artist']), 'is_active' => true]
-            );
-            $categoryIds[] = $cat->id;
-        }
-
-        // Album
-        if (isset($data['album'])) {
-            $cat = Category::firstOrCreate(
-                ['name' => $data['album'], 'type' => 'album'],
-                ['slug' => Str::slug($data['album']), 'is_active' => true]
-            );
-            $categoryIds[] = $cat->id;
-        }
-
-        // Genre
-        if (isset($data['genre'])) {
-            $cat = Category::firstOrCreate(
-                ['name' => $data['genre'], 'type' => 'genre'],
-                ['slug' => Str::slug($data['genre']), 'is_active' => true]
-            );
-            $categoryIds[] = $cat->id;
-        }
-
-        // Language
-        if (isset($data['language'])) {
-            $cat = Category::firstOrCreate(
-                ['name' => $data['language'], 'type' => 'language'],
-                ['slug' => Str::slug($data['language']), 'is_active' => true]
-            );
-            $categoryIds[] = $cat->id;
-        }
-
-        $video->categories()->sync($categoryIds);
-    }
      
     /**
  * Show manage categories page
@@ -541,7 +527,8 @@ public function manageCategories()
  */
 public function addCategory()
 {
-    $categoryTypes = ['genre', 'year', 'artist', 'album', 'language'];
+    // Remove 'artist' and 'album' from the types
+    $categoryTypes = ['genre', 'year', 'language'];
     return view('addcategory', compact('categoryTypes'));
 }
 

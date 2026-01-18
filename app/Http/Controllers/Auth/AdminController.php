@@ -571,7 +571,41 @@ public function deleteCategory($id)
     return back()->with('success', 'Category deleted successfully!');
 }
 
+// In app/Http/Controllers/Auth/AdminController.php
 
+// Add this method:
+public function manageReviews()
+{
+    $pendingReviews = \App\Models\Review::with(['reviewable', 'user'])
+        ->where('is_approved', false)
+        ->orderBy('created_at', 'desc')
+        ->get();
+    
+    $approvedReviews = \App\Models\Review::with(['reviewable', 'user'])
+        ->where('is_approved', true)
+        ->orderBy('created_at', 'desc')
+        ->paginate(20);
+    
+    return view('manage-reviews', compact('pendingReviews', 'approvedReviews'));
+}
+
+// Add this method to approve reviews:
+public function approveReview($id)
+{
+    $review = \App\Models\Review::findOrFail($id);
+    $review->update(['is_approved' => true]);
+    
+    return redirect()->back()->with('success', 'Review approved successfully!');
+}
+
+// Add this method to delete reviews:
+public function deleteReview($id)
+{
+    $review = \App\Models\Review::findOrFail($id);
+    $review->delete();
+    
+    return redirect()->back()->with('success', 'Review deleted successfully!');
+}
 
 
 }

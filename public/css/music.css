@@ -1,213 +1,401 @@
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --dark-bg: #0a0a0f;
-            --card-bg: #16161d;
-        }
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    --dark-bg: #0a0a0f;
+    --card-bg: #16161d;
+}
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: var(--dark-bg);
-            color: #fff;
-            overflow-x: hidden;
-        }
+body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--dark-bg);
+    color: #fff;
+    overflow-x: hidden;
+}
 
-        .display-font {
-            font-family: 'Bebas Neue', cursive;
-            letter-spacing: 2px;
-        }
+.display-font {
+    font-family: 'Bebas Neue', cursive;
+    letter-spacing: 2px;
+}
 
-        /* Animated Background */
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(245, 87, 108, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 50% 50%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
-            animation: bgShift 15s ease-in-out infinite;
-        }
+/* Animated Background */
+.animated-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(245, 87, 108, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 50% 50%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+    animation: bgShift 15s ease-in-out infinite;
+}
 
-        @keyframes bgShift {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
+@keyframes bgShift {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
 
-        .content-wrapper {
-            position: relative;
-            z-index: 1;
-        }
+.content-wrapper {
+    position: relative;
+    z-index: 1;
+}
 
-        /* Page Header */
-        .page-header {
-            padding-top: 120px;
-            padding-bottom: 40px;
-        }
+/* Page Header */
+.page-header {
+    padding-top: 120px;
+    padding-bottom: 40px;
+}
 
-        .page-title {
-            font-size: clamp(3rem, 8vw, 6rem);
-            line-height: 0.9;
-            background: linear-gradient(135deg, #fff 0%, #667eea 50%, #f5576c 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: titleFade 1s ease-out;
-        }
+.page-title {
+    font-size: clamp(3rem, 8vw, 6rem);
+    line-height: 0.9;
+    background: linear-gradient(135deg, #fff 0%, #667eea 50%, #f5576c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleFade 1s ease-out;
+}
 
-        @keyframes titleFade {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+@keyframes titleFade {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
 
-        /* Filter Section */
-        .filter-section {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 1.5rem;
-            padding: 2rem;
-            margin-bottom: 3rem;
-        }
+/* Filter Section */
+.filter-section {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    margin-bottom: 3rem;
+}
 
-        .filter-btn {
-            background: rgba(102, 126, 234, 0.2);
-            border: 1px solid rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-        }
+.filter-btn {
+    background: rgba(102, 126, 234, 0.2);
+    border: 1px solid rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+}
 
-        .filter-btn:hover, .filter-btn.active {
-            background: rgba(102, 126, 234, 0.4);
-            border-color: rgba(102, 126, 234, 0.8);
-            transform: translateY(-2px);
-        }
+.filter-btn:hover, .filter-btn.active {
+    background: rgba(102, 126, 234, 0.4);
+    border-color: rgba(102, 126, 234, 0.8);
+    transform: translateY(-2px);
+}
 
-        /* Cards */
-        .media-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            border-radius: 1rem;
-            display: flex;
-            flex-direction: column;
-        }
+/* Cards */
+.media-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+}
 
-        .media-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
+.media-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(245, 87, 108, 0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
 
-        .media-card:hover::before {
-            opacity: 1;
-        }
+.media-card:hover::before {
+    opacity: 1;
+}
 
-        .media-card:hover {
-            transform: translateY(-8px);
-            border-color: rgba(102, 126, 234, 0.5);
-            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
-        }
+.media-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(102, 126, 234, 0.5);
+    box-shadow: 0 20px 40px rgba(102, 126, 234, 0.2);
+}
 
-        .new-badge {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            animation: pulse 2s ease-in-out infinite;
-        }
+.new-badge {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    animation: pulse 2s ease-in-out infinite;
+}
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
 
-        .media-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
+.media-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
 
-        .media-card:hover .media-image {
-            transform: scale(1.1);
-        }
+.media-card:hover .media-image {
+    transform: scale(1.1);
+}
 
-        /* Rating Stars */
-        .stars {
-            color: #fbbf24;
-        }
+/* Rating & Review Styles (From Friend's Version) */
+.stars {
+    color: #fbbf24;
+}
 
-        /* Search Bar */
-        .search-bar {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
+.star-rating {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+}
 
-        .search-bar:focus {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(102, 126, 234, 0.5);
-            outline: none;
-        }
+.star-btn {
+    color: #6b7280; /* Default gray */
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.2s ease;
+}
 
-        /* Button Styles */
-        .btn-gradient {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            transition: all 0.3s ease;
-        }
+.star-btn:hover {
+    color: #fbbf24;
+    transform: scale(1.1);
+}
 
-        .btn-gradient:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-        }
+.star-btn.active {
+    color: #fbbf24;
+}
 
-        /* Sort Dropdown */
-        .sort-select {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            transition: all 0.3s ease;
-        }
+.review-comment {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    resize: vertical;
+    width: 100%;
+    min-height: 80px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.875rem;
+    transition: all 0.3s ease;
+}
 
-        .sort-select:focus {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(102, 126, 234, 0.5);
-            outline: none;
-        }
+.review-comment:focus {
+    outline: none;
+    border-color: rgba(102, 126, 234, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
 
-        /* Fade in animation */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.8s ease-out forwards;
-        }
+.review-comment::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+}
 
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+.status-msg {
+    font-size: 0.75rem;
+    margin-top: 0.5rem;
+    min-height: 1rem;
+    display: block;
+}
 
-        .fade-in:nth-child(1) { animation-delay: 0.05s; }
-        .fade-in:nth-child(2) { animation-delay: 0.1s; }
-        .fade-in:nth-child(3) { animation-delay: 0.15s; }
-        .fade-in:nth-child(4) { animation-delay: 0.2s; }
-        .fade-in:nth-child(5) { animation-delay: 0.25s; }
-        .fade-in:nth-child(6) { animation-delay: 0.3s; }
-        .fade-in:nth-child(7) { animation-delay: 0.35s; }
-        .fade-in:nth-child(8) { animation-delay: 0.4s; }
+.status-msg.success {
+    color: #10b981;
+}
+
+.status-msg.error {
+    color: #f5576c;
+}
+
+.status-msg.warning {
+    color: #fbbf24;
+}
+
+/* Search Bar */
+.search-bar {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.search-bar:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(102, 126, 234, 0.5);
+    outline: none;
+}
+
+/* Button Styles */
+.btn-gradient {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.btn-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+/* Sort Dropdown */
+.sort-select {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+.sort-select:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(102, 126, 234, 0.5);
+    outline: none;
+}
+
+/* Fade in animation */
+.fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    animation: fadeInUp 0.8s ease-out forwards;
+}
+
+@keyframes fadeInUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.fade-in:nth-child(1) { animation-delay: 0.05s; }
+.fade-in:nth-child(2) { animation-delay: 0.1s; }
+.fade-in:nth-child(3) { animation-delay: 0.15s; }
+.fade-in:nth-child(4) { animation-delay: 0.2s; }
+.fade-in:nth-child(5) { animation-delay: 0.25s; }
+.fade-in:nth-child(6) { animation-delay: 0.3s; }
+.fade-in:nth-child(7) { animation-delay: 0.35s; }
+.fade-in:nth-child(8) { animation-delay: 0.4s; }
+
+/* Enhanced form styles for consistency */
+.submit-review {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.submit-review:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .filter-section {
+        padding: 1.5rem;
+    }
+    
+    .page-header {
+        padding-top: 100px;
+        padding-bottom: 30px;
+    }
+    
+    .review-comment {
+        min-height: 70px;
+        font-size: 0.8rem;
+    }
+    
+    .star-btn {
+        font-size: 1.1rem;
+    }
+}
+
+/* Loading state for reviews */
+.submit-review.loading {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Rating form section */
+.rating-section {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ========== EMERGENCY FIXES ========== */
+/* Fix all interaction issues */
+
+/* 1. Make sure pseudo-elements don't block clicks */
+.media-card::before,
+.media-card::after,
+.media-card *::before,
+.media-card *::after {
+    pointer-events: none !important;
+}
+
+/* 2. Make all interactive elements clickable */
+.star-btn,
+.submit-review,
+.review-comment,
+.filter-btn,
+.btn-gradient {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+/* 3. Make textarea editable */
+.review-comment {
+    pointer-events: auto !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    resize: vertical !important;
+}
+
+/* 4. Ensure card content is above any overlays */
+.media-card > * {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* 5. Remove any potential blocking */
+.media-card {
+    position: relative !important;
+}
+
+.media-card .p-4 {
+    pointer-events: auto !important;
+    z-index: 2 !important;
+}
+
+/* 6. Debug styling - remove after fixing */
+.star-btn {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-radius: 50% !important;
+    padding: 5px !important;
+}
+
+.star-btn:hover {
+    background: rgba(251, 191, 36, 0.2) !important;
+    transform: scale(1.2) !important;
+}
+
+/* 7. Force interactivity on hover state */
+.media-card:hover .star-btn,
+.media-card:hover .submit-review,
+.media-card:hover .review-comment {
+    pointer-events: auto !important;
+    z-index: 100 !important;
+}

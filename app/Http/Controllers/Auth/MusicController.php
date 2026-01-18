@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\Api;  // Keep this correct namespace
 
 use App\Http\Controllers\Controller;
 use App\Models\Music;

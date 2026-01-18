@@ -65,6 +65,7 @@ public function viewMusic()
             'year' => 'required|digits:4',
             'genre' => 'required|string',
             'language' => 'required|string',
+            'duration' => 'required|string|max:10',
             'description' => 'nullable|string',
         ]);
 
@@ -91,6 +92,7 @@ $music = Music::create([
     'year' => $validatedData['year'],
     'genre' => $validatedData['genre'],
     'language' => $validatedData['language'],
+    'duration' => $validatedData['duration'],
     'file_path' => $musicFilePath,
     'cover_image' => $thumbnailPath,
     'is_new' => true,
@@ -133,6 +135,7 @@ public function updateMusic(Request $request, $id)
         'year' => 'required|digits:4',
         'genre' => 'required|string',
         'language' => 'required|string',
+        'duration' => 'required|string|max:10',
         'description' => 'nullable|string',
     ]);
 
@@ -170,6 +173,7 @@ public function updateMusic(Request $request, $id)
         'year' => $validatedData['year'],
         'genre' => $validatedData['genre'],
         'language' => $validatedData['language'],
+        'duration' => $validatedData['duration']
     ]);
 
     // Update categories

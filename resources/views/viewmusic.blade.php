@@ -77,7 +77,8 @@
             <th class="text-left py-3 px-4 text-gray-400 font-semibold">#</th>
             <th class="text-left py-3 px-4 text-gray-400 font-semibold">Title</th>
             <th class="text-left py-3 px-4 text-gray-400 font-semibold">Artist</th>
-            <th class="text-left py-3 px-4 text-gray-400 font-semibold">Genre</th> 
+            <th class="text-left py-3 px-4 text-gray-400 font-semibold">Catagory</th>
+            <th class="text-left py-3 px-4 text-gray-400 font-semibold">Duration</th> 
             <th class="text-left py-3 px-4 text-gray-400 font-semibold">File</th>
             <th class="text-left py-3 px-4 text-gray-400 font-semibold">Date Added</th>
             <th class="text-left py-3 px-4 text-gray-400 font-semibold">Actions</th>
@@ -91,6 +92,9 @@
             <td class="py-3 px-4">{{ $track->artist }}</td>
             <td class="py-3 px-4">
                 <span class="text-sm text-gray-400">{{ $track->genre ?? 'N/A' }}</span>
+            </td>
+            <td class="py-3 px-4">
+                <span class="text-sm text-gray-400">{{ $track->duration ?? 'N/A' }}</span>
             </td>
             <td class="py-3 px-4">
                 <span class="text-sm text-gray-400">{{ pathinfo($track->file_path, PATHINFO_EXTENSION) }}</span>

@@ -176,6 +176,14 @@
                             </div>
                         </div>
 
+<!-- Duration -->
+<div class="form-group">
+    <label class="form-label">Duration *</label>
+    <input type="text" name="duration" class="input input-bordered w-full" 
+           value="{{ old('duration') }}" required placeholder="3:45">
+    <p class="text-sm text-gray-400 mt-1">Format: MM:SS or HH:MM:SS</p>
+</div>
+
                         <!-- Description (Optional) -->
                         <div class="mb-6">
                             <label for="description" class="form-label">Description (Optional)</label>

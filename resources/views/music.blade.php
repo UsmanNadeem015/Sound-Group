@@ -33,24 +33,24 @@
 
 
 <!-- Filter and Sort Section start -->
-        <section class="py-8">
-            <div class="container mx-auto px-4">
-                <div class="filter-section">
-                    <!-- Filter by Category -->
-                    <div class="text-center">
-                        <h3 class="text-lg font-semibold mb-4">Filter by Category</h3>
-                        <div class="flex flex-wrap gap-2 justify-center">
-                            <button class="filter-btn active px-4 py-2 rounded-full text-sm font-semibold">All</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Album</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Artist</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Year</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Genre</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Language</button>
-                        </div>
-                    </div>
+<section class="py-8">
+    <div class="container mx-auto px-4">
+        <div class="filter-section">
+            <!-- Filter by Category -->
+            <div class="text-center">
+                <h3 class="text-lg font-semibold mb-4">Filter by Category</h3>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <a href="{{ route('music') }}" class="filter-btn {{ !request('category') ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">All</a>
+                    <a href="{{ route('music', ['category' => 'album']) }}" class="filter-btn {{ request('category') == 'album' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Album</a>
+                    <a href="{{ route('music', ['category' => 'artist']) }}" class="filter-btn {{ request('category') == 'artist' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Artist</a>
+                    <a href="{{ route('music', ['category' => 'year']) }}" class="filter-btn {{ request('category') == 'year' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Year</a>
+                    <a href="{{ route('music', ['category' => 'genre']) }}" class="filter-btn {{ request('category') == 'genre' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Genre</a>
+                    <a href="{{ route('music', ['category' => 'language']) }}" class="filter-btn {{ request('category') == 'language' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Language</a>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
 <!-- Filter and Sort Section end -->
 
 <!-- Music Grid start -->
@@ -59,38 +59,57 @@
         @forelse ($music as $song)
             <div class="media-card rounded-2xl overflow-hidden fade-in">
                 <div class="relative">
-                    <!-- <img src="{{ $song->thumbnail_url }}" alt="{{ $song->title }}" class="media-image" /> -->
-                    <!-- <img src="{{ asset($song->cover_image) }}" alt="{{ $song->title }}" class="media-image" /> -->
-                    <img src="{{ asset('storage/music/covers/' . basename($song->cover_image)) }}" alt="{{ $song->title }}" class="media-image" />
-
+                    <!-- Fix the cover image path -->
+                    @if($song->cover_image && file_exists(public_path('storage/' . $song->cover_image)))
+                        <img src="{{ asset('storage/' . $song->cover_image) }}" alt="{{ $song->title }}" class="media-image w-full h-48 object-cover" />
+                    @else
+                        <!-- Fallback image -->
+                        <div class="media-image w-full h-48 bg-gradient-to-br from-purple-900 to-pink-800 flex items-center justify-center">
+                            <span class="text-white text-xl">{{ substr($song->title, 0, 1) }}</span>
+                        </div>
+                    @endif
 
                     @if ($song->is_new_badge)
-                        <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
+                        <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600">NEW</span>
                     @endif
                 </div>
                 <div class="p-4">
                     <h3 class="font-bold text-lg mb-1 truncate">{{ $song->title }}</h3>
                     <p class="text-gray-400 text-sm mb-2 truncate">by {{ $song->artist }}</p>
-                    <p class="text-xs text-gray-400 mb-2">{{ $song->duration }}</p>
+                    <p class="text-xs text-gray-400 mb-2">
+                        Album: {{ $song->album ?? 'Unknown' }} | 
+                        Duration: {{ $song->duration ?? 'N/A' }}
+                    </p>
                     <div class="flex items-center justify-between mb-3">
-                        <div class="stars text-sm">{{ str_repeat('★', round($song->average_rating)) }}</div>
-                        <span class="text-xs text-gray-500">{{ $song->year }}</span>
+                        <div class="stars text-sm text-yellow-400">
+                            {{ str_repeat('★', $song->average_rating) }}{{ str_repeat('☆', 5 - $song->average_rating) }}
+                        </div>
+                        <span class="text-xs text-gray-500">{{ $song->year ?? 'N/A' }}</span>
                     </div>
                     <div class="flex flex-wrap gap-1 mb-3">
-                        <span class="badge badge-sm badge-outline">{{ $song->genre }}</span>
-                        <span class="badge badge-sm badge-outline">{{ $song->language }}</span>
+                        @if($song->genre)
+                            <span class="badge badge-sm badge-outline border-purple-500 text-purple-400">{{ $song->genre }}</span>
+                        @endif
+                        @if($song->language)
+                            <span class="badge badge-sm badge-outline border-pink-500 text-pink-400">{{ $song->language }}</span>
+                        @endif
                     </div>
-                    <button class="btn btn-gradient btn-sm w-full text-white">▶ Play Now</button>
+                    <button class="btn btn-gradient btn-sm w-full text-white hover:scale-105 transition-transform">
+                        ▶ Play Now
+                    </button>
                 </div>
             </div>
         @empty
-            <p class="text-center col-span-full text-gray-400">No music available right now.</p>
+            <div class="col-span-full text-center py-12">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+                <p class="text-xl text-gray-400 mb-2">No music available right now.</p>
+                <p class="text-gray-500">Check back later or add some music from the admin panel.</p>
+            </div>
         @endforelse
     </div>
 </section>
-
-
-    
 <!-- Music Grid end -->
 
 <!-- Footer start -->

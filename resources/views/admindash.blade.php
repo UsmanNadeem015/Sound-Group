@@ -42,10 +42,6 @@
                 <!-- Statistics Cards -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                     <div class="stat-card rounded-2xl p-6 text-center">
-                        <div class="text-4xl font-bold display-font text-purple-400 mb-2">{{ $stats['total_users'] ?? 0 }}</div>
-                        <div class="text-gray-400">Total Users</div>
-                    </div>
-                    <div class="stat-card rounded-2xl p-6 text-center">
                         <div class="text-4xl font-bold display-font text-pink-400 mb-2">{{ $stats['total_music'] ?? 0 }}</div>
                         <div class="text-gray-400">Music Tracks</div>
                     </div>
@@ -57,6 +53,11 @@
                         <div class="text-4xl font-bold display-font text-pink-400 mb-2">{{ $stats['total_categories'] ?? 0 }}</div>
                         <div class="text-gray-400">Categories</div>
                     </div>
+                    <div class="stat-card rounded-2xl p-6 text-center">
+                        <div class="text-4xl font-bold display-font text-purple-400 mb-2">{{ $stats['total_users'] ?? 0 }}</div>
+                        <div class="text-gray-400">Total Users</div>
+                    </div>
+
                 </div>
 
                 <!-- Quick Actions -->
@@ -100,10 +101,10 @@
         </svg>
     </div>
     <h3 class="font-bold text-lg mb-2">Categories</h3>
-    <p class="text-sm text-gray-400 mb-4">Manage genres & categories</p>
+    <p class="text-sm text-gray-400 mb-4">Manage categories</p>
     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-auto">
         <a href="{{ route('admin.managecategories') }}" class="btn btn-gradient btn-sm text-white w-full">Manage</a>
-        <a href="{{ route('admin.addcategory') }}" class="btn btn-gradient btn-sm text-white w-full">Add New</a>
+        <a href="{{ route('admin.addcategory') }}" class="btn btn-gradient btn-sm text-white w-full">New</a>
     </div>
 </div>
 
@@ -115,26 +116,8 @@
                                 </svg>
                             </div>
                             <h3 class="font-bold text-lg mb-2">Manage Users</h3>
-                            <p class="text-sm text-gray-400 mb-4">View & manage user accounts</p>
+                            <p class="text-sm text-gray-400 mb-4">Manage user accounts</p>
                             <a href="{{ route('admin.manageusers') }}" class="btn btn-gradient btn-sm text-white">Manage</a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Activity (Optional - You can add this later) -->
-                <div class="section-card mb-8">
-                    <h2 class="section-title display-font mb-6">RECENT ACTIVITY</h2>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4 p-4 bg-white/5 rounded-lg">
-                            <div class="text-purple-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <p class="font-semibold">System is running smoothly</p>
-                                <p class="text-sm text-gray-400">All services are operational</p>
-                            </div>
                         </div>
                     </div>
                 </div>

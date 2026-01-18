@@ -5,6 +5,12 @@ composer install
 composer require laravel/sanctum
 php artisan storage:link
 
+<!-- Linux -->
+sudo npm install
+/opt/lampp/bin/php /usr/bin/composer install
+cp .env.example .env
+sudo /opt/lampp/bin/php artisan migrate
+
 
 
 <!--  Only do this part if after running composer install it throws an error -->
@@ -30,5 +36,7 @@ DB_CONNECTION=mysql
 npm run dev
 php artisan serve
 
+<!-- Linux -->
+/opt/lampp/bin/php artisan serve
 
 

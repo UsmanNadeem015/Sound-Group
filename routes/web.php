@@ -63,8 +63,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('Dashboard/Admin')->group(func
     // Video Management
     Route::get('/Add-Video', [AdminController::class, 'addVideo'])->name('admin.addvideo');
     Route::post('/Add-Video', [VideoController::class, 'store'])->name('admin.storevideo');
+
+    // viewing videos
+    Route::get('/View-Videos', [AdminController::class, 'viewVideos'])->name('admin.viewvideos');
+
     Route::delete('/Video/{id}', [AdminController::class, 'deleteVideo'])->name('admin.deletevideo');
-    
     // User Management
     Route::get('/Manage-Users', [AdminController::class, 'manageUsers'])->name('admin.manageusers');
     Route::delete('/Users/{id}', [AdminController::class, 'deleteUser'])->name('admin.deleteuser');

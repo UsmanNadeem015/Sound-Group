@@ -27,9 +27,9 @@
 <!-- Hero start -->
         <section class="hero-section pt-20">
             <div class="container mx-auto px-4">
-                <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="grid lg:grid-cols-2 gap-20 items-center">
                     <div>
-                        <h1 class="hero-title display-font mb-6">
+                        <h1 class="hero-title display-font mb-6 text-5xl md:text-6xl lg:text-7xl xl:text-8xl">
                             YOUR ULTIMATE<br>ENTERTAINMENT<br>DESTINATION
                         </h1>
                         <p class="hero-subtitle text-xl text-gray-300 mb-8 font-light">

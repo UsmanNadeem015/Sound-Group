@@ -73,23 +73,29 @@
     <h3 class="font-bold text-lg mb-2">Music Management</h3>
     <p class="text-sm text-gray-400 mb-4">Manage music tracks</p>
     <div class="flex flex-col sm:flex-row gap-2">
-        <a href="{{ route('admin.addmusic') }}" class="btn btn-gradient btn-sm text-white">Add Music</a>
-        <a href="{{ route('admin.viewmusic') }}" class="btn btn-gradient btn-sm text-white">
+        <a href="{{ route('admin.addmusic') }}" class="btn btn-gradient btn-sm text-white ">Add Music</a>
+        <a href="{{ route('admin.viewmusic') }}" class="btn btn-gradient btn-sm text-white ">
             View Music
         </a>
     </div>
 </div>
-                        <!-- Add Video -->
-                        <div class="action-card">
-                            <div class="action-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
-                                </svg>
-                            </div>
-                            <h3 class="font-bold text-lg mb-2">Add Video</h3>
-                            <p class="text-sm text-gray-400 mb-4">Upload new video files</p>
-                            <a href="{{ route('admin.addvideo') }}" class="btn btn-gradient btn-sm text-white">Add Video</a>
-                        </div>
+
+<!-- Video Management -->
+<div class="action-card">
+    <div class="action-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
+        </svg>
+    </div>
+    <h3 class="font-bold text-lg mb-2">Video Management</h3>
+    <p class="text-sm text-gray-400 mb-4">Manage video content</p>
+    <div class="flex flex-col sm:flex-row gap-2">
+        <a href="{{ route('admin.addvideo') }}" class="btn btn-gradient btn-sm text-white">Add Video</a>
+        <a href="{{ route('admin.viewvideos') }}" class="btn btn-gradient btn-sm text-white">
+            View Videos
+        </a>
+    </div>
+</div>
 
                         <!-- Manage Categories -->
                         <div class="action-card">

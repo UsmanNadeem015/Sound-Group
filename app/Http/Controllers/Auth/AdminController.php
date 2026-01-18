@@ -249,6 +249,15 @@ public function updateMusic(Request $request, $id)
     }
 
     /**
+    * View all videos
+    */
+    public function viewVideos()
+    {
+        $videos = Video::latest()->get();
+        return view('admin.viewvideos', compact('videos'));
+    }
+
+    /**
      * Show manage users page
      */
     public function manageUsers()

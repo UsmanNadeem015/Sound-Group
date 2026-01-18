@@ -55,7 +55,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('Dashboard/Admin')->group(func
     // Music Management
     Route::get('/Add-Music', [AdminController::class, 'addMusic'])->name('admin.addmusic');
     Route::post('/Add-Music', [MusicController::class, 'store'])->name('admin.storemusic');
-    Route::delete('/Music/{id}', [AdminController::class, 'deleteMusic'])->name('admin.deletemusic');
+    
+    // Viewing Music
+    Route::get('/View-Music', [AdminController::class, 'viewMusic'])->name('admin.viewmusic');
+    Route::delete('/Music/{id}', [AdminController::class, 'deleteMusic'])->name('admin.deletemusic');    
+    
+    // Edit Music
+    Route::get('/Edit-Music/{id}', [AdminController::class, 'editMusic'])->name('admin.editmusic');
+    Route::put('/Update-Music/{id}', [AdminController::class, 'updateMusic'])->name('admin.updatemusic');
     
     // Video Management
     Route::get('/Add-Video', [AdminController::class, 'addVideo'])->name('admin.addvideo');

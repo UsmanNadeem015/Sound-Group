@@ -37,6 +37,19 @@ class AdminController extends Controller
         return view('addmusic', compact('categories'));
     }
 
+/**
+ * View all music
+ */
+public function viewMusic()
+{
+    $music = Music::with('categories')->latest()->get();
+    
+    return view('viewmusic', compact('music'));
+}
+
+
+
+
     /**
      * Store new music
      */
@@ -91,6 +104,80 @@ $music = Music::create([
         return redirect()->route('admin.dashboard')
             ->with('success', 'Music added successfully!');
     }
+
+/**
+ * Show edit music form
+ */
+public function editMusic($id)
+{
+    $music = Music::findOrFail($id);
+    $categories = Category::where('is_active', true)->get();
+    
+    return view('editmusic', compact('music', 'categories'));
+}
+
+/**
+ * Update music
+ */
+public function updateMusic(Request $request, $id)
+{
+    $music = Music::findOrFail($id);
+    
+    // Validate
+    $validatedData = $request->validate([
+        'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        'musicFile' => 'nullable|mimes:mp3,wav,ogg|max:51200',
+        'musicName' => 'required|string|max:255',
+        'artist' => 'required|string|max:255',
+        'album' => 'required|string|max:255',
+        'year' => 'required|digits:4',
+        'genre' => 'required|string',
+        'language' => 'required|string',
+        'description' => 'nullable|string',
+    ]);
+
+    // Update thumbnail if provided
+    if ($request->hasFile('thumbnail')) {
+        // Delete old thumbnail
+        if ($music->cover_image) {
+            Storage::disk('public')->delete($music->cover_image);
+        }
+        
+        $thumbnail = $request->file('thumbnail');
+        $thumbnailName = time() . '_' . Str::slug($validatedData['musicName']) . '.' . $thumbnail->getClientOriginalExtension();
+        $thumbnailPath = $thumbnail->storeAs('images/music', $thumbnailName, 'public');
+        $music->cover_image = $thumbnailPath;
+    }
+
+    // Update music file if provided
+    if ($request->hasFile('musicFile')) {
+        // Delete old music file
+        Storage::disk('public')->delete($music->file_path);
+        
+        $musicFile = $request->file('musicFile');
+        $musicFileName = time() . '_' . Str::slug($validatedData['musicName']) . '.' . $musicFile->getClientOriginalExtension();
+        $musicFilePath = $musicFile->storeAs('music', $musicFileName, 'public');
+        $music->file_path = $musicFilePath;
+    }
+
+    // Update music record
+    $music->update([
+        'title' => $validatedData['musicName'],
+        'slug' => Str::slug($validatedData['musicName']),
+        'description' => $validatedData['description'] ?? null,
+        'artist' => $validatedData['artist'],
+        'album' => $validatedData['album'],
+        'year' => $validatedData['year'],
+        'genre' => $validatedData['genre'],
+        'language' => $validatedData['language'],
+    ]);
+
+    // Update categories
+    $this->attachMusicCategories($music, $validatedData);
+
+    return redirect()->route('admin.viewmusic')
+        ->with('success', 'Music updated successfully!');
+}
 
     /**
      * Show add video form

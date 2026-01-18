@@ -75,3 +75,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('Dashboard/Admin')->group(func
 });
 
 Route::get('/Music', [MusicFetchController::class, 'index'])->name('music');
+
+Route::get('/', function () {
+    // Fetch latest 5 music tracks
+    $latestMusic = \App\Models\Music::where('is_active', true)
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+    
+    return view('home', compact('latestMusic'));
+})->name('home');

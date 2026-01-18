@@ -80,113 +80,64 @@
 <!-- Stats end -->
 
 <!-- Latest Music start -->
-        <section class="py-16">
-            <div class="container mx-auto px-4">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="section-title display-font">LATEST MUSIC</h2>
-                    <a href="{{ url('/Music') }}" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold">View All →</a>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                    <!-- Music Card 1 -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="section-title display-font">LATEST MUSIC</h2>
+            <a href="{{ url('/Music') }}" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold">View All →</a>
+        </div>
+        
+        @if($latestMusic->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                @foreach($latestMusic as $song)
                     <div class="media-card rounded-2xl overflow-hidden fade-in">
                         <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop" alt="Album Cover" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
+                            @if($song->cover_image && file_exists(public_path('storage/' . $song->cover_image)))
+                                <img src="{{ asset('storage/' . $song->cover_image) }}" alt="{{ $song->title }}" class="media-image w-full h-48 object-cover">
+                            @else
+                                <!-- Fallback image if no cover -->
+                                <div class="media-image w-full h-48 bg-gradient-to-br from-purple-900 to-pink-800 flex items-center justify-center">
+                                    <span class="text-white text-xl">{{ substr($song->title, 0, 1) }}</span>
+                                </div>
+                            @endif
+                            
+                            @if($song->is_new)
+                                <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600">NEW</span>
+                            @endif
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Midnight Dreams</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by The Dreamers</p>
+                            <h3 class="font-bold text-lg mb-1 truncate">{{ $song->title }}</h3>
+                            <p class="text-gray-400 text-sm mb-2 truncate">by {{ $song->artist }}</p>
                             <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">2024</span>
+                                <div class="stars text-sm text-yellow-400">
+                                    <!-- Placeholder for ratings - you can add ratings later -->
+                                    ★★★★☆
+                                </div>
+                                <span class="text-xs text-gray-500">{{ $song->year ?? 'N/A' }}</span>
                             </div>
                             <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Pop</span>
-                                <span class="badge badge-sm badge-outline ml-1">English</span>
+                                @if($song->genre)
+                                    <span class="badge badge-sm badge-outline border-purple-500 text-purple-400">{{ $song->genre }}</span>
+                                @endif
+                                @if($song->language)
+                                    <span class="badge badge-sm badge-outline border-pink-500 text-pink-400 ml-1">{{ $song->language }}</span>
+                                @endif
                             </div>
                         </div>
                     </div>
-
-                    <!-- Music Card 2 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop" alt="Album Cover" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Dil Ki Baatein</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Arijit Kumar</p>
-                            <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">2024</span>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Romantic</span>
-                                <span class="badge badge-sm badge-outline ml-1">Hindi</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Music Card 3 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop" alt="Album Cover" class="media-image">
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Electric Pulse</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by DJ Neon</p>
-                            <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">2024</span>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Electronic</span>
-                                <span class="badge badge-sm badge-outline ml-1">English</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Music Card 4 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=400&h=400&fit=crop" alt="Album Cover" class="media-image">
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Raat Ka Safar</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Shreya Malhotra</p>
-                            <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">2024</span>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Folk</span>
-                                <span class="badge badge-sm badge-outline ml-1">Regional</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Music Card 5 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=400&fit=crop" alt="Album Cover" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Summer Vibes</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Beach Boys Crew</p>
-                            <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">2024</span>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Pop Rock</span>
-                                <span class="badge badge-sm badge-outline ml-1">English</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
-        </section>
+        @else
+            <div class="text-center py-12">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+                <p class="text-xl text-gray-400">No music available yet</p>
+                <p class="text-gray-500 mt-2">Check back later for new releases</p>
+            </div>
+        @endif
+    </div>
+</section>
 <!-- Latest Music end -->
 
 <!-- Latest Videos start -->

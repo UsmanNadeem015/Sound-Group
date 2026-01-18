@@ -102,11 +102,23 @@
                                 <input type="number" name="year" class="input input-bordered w-full" value="{{ old('year', $music->year) }}" required min="1900" max="{{ date('Y') + 1 }}">
                             </div>
 
-                            <!-- Genre -->
-                            <div class="form-group">
-                                <label class="form-label">Genre *</label>
-                                <input type="text" name="genre" class="input input-bordered w-full" value="{{ old('genre', $music->genre) }}" required>
-                            </div>
+<!-- Genre -->
+<div class="form-group">
+    <label class="form-label">Genre *</label>
+    <select name="genre" class="select select-bordered w-full" required>
+        <option value="" disabled selected>Select a genre</option>
+        @foreach(\App\Models\Category::where('type', 'genre')->where('is_active', true)->orderBy('name')->get() as $genre)
+            <option value="{{ $genre->name }}" {{ old('genre') == $genre->name ? 'selected' : '' }}>
+                {{ $genre->name }}
+            </option>
+        @endforeach
+        <option value="custom">+ Add New Genre</option>
+    </select>
+    <!-- Hidden input for custom genre -->
+    <div id="customGenreContainer" class="hidden mt-2">
+        <input type="text" name="custom_genre" class="input input-bordered w-full" placeholder="Enter new genre name">
+    </div>
+</div>
 
                             <!-- Language -->
                             <div class="form-group">
@@ -139,5 +151,16 @@
         <x-footer />
         <!-- Footer end -->
     </div>
+
+    <script>
+document.querySelector('select[name="genre"]').addEventListener('change', function() {
+    const customContainer = document.getElementById('customGenreContainer');
+    if (this.value === 'custom') {
+        customContainer.classList.remove('hidden');
+    } else {
+        customContainer.classList.add('hidden');
+    }
+});
+</script>
 </body>
 </html>

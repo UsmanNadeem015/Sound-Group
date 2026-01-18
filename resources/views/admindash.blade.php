@@ -93,16 +93,19 @@
     </div>
 </div>
                         <!-- Manage Categories -->
-                        <div class="action-card">
-                            <div class="action-icon">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                    <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
-                                </svg>
-                            </div>
-                            <h3 class="font-bold text-lg mb-2">Manage Categories</h3>
-                            <p class="text-sm text-gray-400 mb-4">Create & manage categories</p>
-                            <button class="btn btn-gradient btn-sm text-white" onclick="alert('Coming soon!')">Manage</button>
-                        </div>
+<div class="action-card">
+    <div class="action-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />
+        </svg>
+    </div>
+    <h3 class="font-bold text-lg mb-2">Categories</h3>
+    <p class="text-sm text-gray-400 mb-4">Manage genres & categories</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-auto">
+        <a href="{{ route('admin.managecategories') }}" class="btn btn-gradient btn-sm text-white w-full">Manage</a>
+        <a href="{{ route('admin.addcategory') }}" class="btn btn-gradient btn-sm text-white w-full">Add New</a>
+    </div>
+</div>
 
                         <!-- Manage Users -->
                         <div class="action-card">

@@ -101,9 +101,10 @@
                                 </div>
                             @endif
                             
-                            @if($song->is_new)
-                                <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600">NEW</span>
-                            @endif
+                            
+@if($song->is_new_badge)
+    <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600">NEW</span>
+@endif
                         </div>
                         <div class="p-4">
                             <h3 class="font-bold text-lg mb-1 truncate">{{ $song->title }}</h3>
@@ -113,7 +114,7 @@
                                     <!-- Placeholder for ratings - you can add ratings later -->
                                     ★★★★☆
                                 </div>
-                                <span class="text-xs text-gray-500">{{ $song->year ?? 'N/A' }}</span>
+                                <span class="text-xs text-gray-500">{{ $song->year ?? 'N/A' }} | {{ $song->duration ?? 'N/A' }}</span>
                             </div>
                             <div class="mt-3">
                                 @if($song->genre)
@@ -141,19 +142,33 @@
 <!-- Latest Music end -->
 
 <!-- Latest Videos start -->
-        <section class="py-16">
-            <div class="container mx-auto px-4">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="section-title display-font">LATEST VIDEOS</h2>
-                    <a href="{{ url('/Videos') }}" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold">View All →</a>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
-                    <!-- Video Card 1 -->
+<section class="py-16">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="section-title display-font">LATEST VIDEOS</h2>
+            <a href="{{ url('/Videos') }}" class="text-purple-400 hover:text-purple-300 transition-colors font-semibold">View All →</a>
+        </div>
+        
+        @if($latestVideos->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                @foreach($latestVideos as $video)
                     <div class="media-card rounded-2xl overflow-hidden fade-in">
                         <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
+                            @if($video->thumbnail && file_exists(public_path('storage/' . $video->thumbnail)))
+                                <img src="{{ asset('storage/' . $video->thumbnail) }}" alt="{{ $video->title }}" class="media-image w-full h-48 object-cover">
+                            @else
+                                <!-- Fallback image if no thumbnail -->
+                                <div class="media-image w-full h-48 bg-gradient-to-br from-purple-900 to-pink-800 flex items-center justify-center">
+                                    <span class="text-white text-xl">{{ substr($video->title, 0, 1) }}</span>
+                                </div>
+                            @endif
+                            
+@if($video->is_new_badge)
+    <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600">NEW</span>
+@endif
+                            
+                            <!-- Play button overlay -->
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
                                 <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
@@ -162,127 +177,38 @@
                             </div>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Concert Live 2024</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Rock Legends</p>
+                            <h3 class="font-bold text-lg mb-1 truncate">{{ $video->title }}</h3>
+                            <p class="text-gray-400 text-sm mb-2 truncate">by {{ $video->artist }}</p>
                             <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">45:32</span>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Rock</span>
-                                <span class="badge badge-sm badge-outline ml-1">English</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 2 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
+                                <div class="stars text-sm text-yellow-400">
+                                    <!-- Placeholder for ratings - you can add ratings later -->
+                                    ★★★★☆
                                 </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Bollywood Mashup</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by DJ Rohan</p>
-                            <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">12:45</span>
+                                <span class="text-xs text-gray-500">{{ $video->year ?? 'N/A' }} | {{ $video->duration ?? 'N/A' }}</span>
                             </div>
                             <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Dance</span>
-                                <span class="badge badge-sm badge-outline ml-1">Hindi</span>
+                                @if($video->genre)
+                                    <span class="badge badge-sm badge-outline border-purple-500 text-purple-400">{{ $video->genre }}</span>
+                                @endif
+                                @if($video->language)
+                                    <span class="badge badge-sm badge-outline border-pink-500 text-pink-400 ml-1">{{ $video->language }}</span>
+                                @endif
                             </div>
                         </div>
                     </div>
-
-                    <!-- Video Card 3 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1501612780327-45045538702b?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Acoustic Sessions</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Sarah Mitchell</p>
-                            <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">28:15</span>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Acoustic</span>
-                                <span class="badge badge-sm badge-outline ml-1">English</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 4 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Regional Folk Dance</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Cultural Troupe</p>
-                            <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">35:20</span>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Folk</span>
-                                <span class="badge badge-sm badge-outline ml-1">Regional</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 5 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Jazz Night Special</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Jazz Collective</p>
-                            <div class="flex items-center justify-between">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">52:10</span>
-                            </div>
-                            <div class="mt-3">
-                                <span class="badge badge-sm badge-outline">Jazz</span>
-                                <span class="badge badge-sm badge-outline ml-1">English</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
-        </section>
+        @else
+            <div class="text-center py-12">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <p class="text-xl text-gray-400">No videos available yet</p>
+                <p class="text-gray-500 mt-2">Check back later for new video releases</p>
+            </div>
+        @endif
+    </div>
+</section>
 <!-- Latest Videos end -->
 
 <!-- About start -->

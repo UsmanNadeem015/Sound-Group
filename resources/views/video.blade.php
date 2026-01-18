@@ -33,37 +33,50 @@
 <!-- Page Header end -->
 
 <!-- Filter Section start -->
-        <section class="py-8">
-            <div class="container mx-auto px-4">
-                <div class="filter-section">
-                    <!-- Filter by Category -->
-                    <div class="text-center">
-                        <h3 class="text-lg font-semibold mb-4">Filter by Category</h3>
-                        <div class="flex flex-wrap gap-2 justify-center">
-                            <button class="filter-btn active px-4 py-2 rounded-full text-sm font-semibold">All</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Album</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Artist</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Year</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Genre</button>
-                            <button class="filter-btn px-4 py-2 rounded-full text-sm font-semibold">Language</button>
-                        </div>
-                    </div>
+<section class="py-8">
+    <div class="container mx-auto px-4">
+        <div class="filter-section">
+            <!-- Filter by Category -->
+            <div class="text-center">
+                <h3 class="text-lg font-semibold mb-4">Filter by Category</h3>
+                <div class="flex flex-wrap gap-2 justify-center">
+                    <a href="{{ route('videos') }}" class="filter-btn {{ !request('category') ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">All</a>
+                    <a href="{{ route('videos', ['category' => 'album']) }}" class="filter-btn {{ request('category') == 'album' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Album</a>
+                    <a href="{{ route('videos', ['category' => 'artist']) }}" class="filter-btn {{ request('category') == 'artist' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Artist</a>
+                    <a href="{{ route('videos', ['category' => 'year']) }}" class="filter-btn {{ request('category') == 'year' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Year</a>
+                    <a href="{{ route('videos', ['category' => 'genre']) }}" class="filter-btn {{ request('category') == 'genre' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Genre</a>
+                    <a href="{{ route('videos', ['category' => 'language']) }}" class="filter-btn {{ request('category') == 'language' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Language</a>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
 <!-- Filter Section end -->
 
 
 <!-- Video Grid start -->
-        <section class="py-8 pb-16">
-            <div class="container mx-auto px-4">
-                <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                    <!-- Video Card 1 -->
+<section class="py-8 pb-16">
+    <div class="container mx-auto px-4">
+        @if($videos->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                @foreach($videos as $video)
                     <div class="media-card rounded-2xl overflow-hidden fade-in">
                         <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
+                            @if($video->thumbnail && file_exists(public_path('storage/' . $video->thumbnail)))
+                                <img src="{{ asset('storage/' . $video->thumbnail) }}" alt="{{ $video->title }}" class="media-image w-full h-48 object-cover">
+                            @else
+                                <!-- Fallback image if no thumbnail -->
+                                <div class="media-image w-full h-48 bg-gradient-to-br from-purple-900 to-pink-800 flex items-center justify-center">
+                                    <span class="text-white text-xl">{{ substr($video->title, 0, 1) }}</span>
+                                </div>
+                            @endif
+                            
+@if($video->is_new_badge)
+    <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r from-purple-600 to-pink-600">NEW</span>
+@endif
+                            
+                            <!-- Play button overlay -->
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-300">
                                 <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
                                         <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
@@ -72,641 +85,50 @@
                             </div>
                         </div>
                         <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Concert Live 2024</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Rock Legends</p>
+                            <h3 class="font-bold text-lg mb-1 truncate">{{ $video->title }}</h3>
+                            <p class="text-gray-400 text-sm mb-2 truncate">by {{ $video->artist }}</p>
                             <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">45:32</span>
-                            </div>
+    <div class="stars text-sm text-yellow-400">
+        ★★★★☆
+    </div>
+    <span class="text-xs text-gray-500">{{ $video->year ?? 'N/A' }} | {{ $video->duration ?? 'N/A' }}</span>
+</div>
                             <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Rock</span>
-                                <span class="badge badge-sm badge-outline">English</span>
+                                @if($video->genre)
+                                    <span class="badge badge-sm badge-outline border-purple-500 text-purple-400">{{ $video->genre }}</span>
+                                @endif
+                                @if($video->language)
+                                    <span class="badge badge-sm badge-outline border-pink-500 text-pink-400">{{ $video->language }}</span>
+                                @endif
                             </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
+                            <a href="{{ asset('storage/' . $video->file_path) }}" target="_blank" class="btn btn-gradient btn-sm w-full text-white hover:scale-105 transition-transform">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
                                 </svg>
                                 Watch Now
-                            </button>
+                            </a>
                         </div>
                     </div>
-
-                    <!-- Video Card 2 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1598387993281-cecf8b71a8f8?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Bollywood Mashup</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by DJ Rohan</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">12:45</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Dance</span>
-                                <span class="badge badge-sm badge-outline">Hindi</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 3 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1501612780327-45045538702b?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Acoustic Sessions</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Sarah Mitchell</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">28:15</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Acoustic</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 4 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Regional Folk Dance</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Cultural Troupe</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">35:20</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Folk</span>
-                                <span class="badge badge-sm badge-outline">Regional</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 5 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Jazz Night Special</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Jazz Collective</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">52:10</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Jazz</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 6 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Electronic Beats</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Synthwave Pro</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">18:30</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Electronic</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 7 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Punjabi Wedding</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Mika Singh</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">22:45</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Bhangra</span>
-                                <span class="badge badge-sm badge-outline">Punjabi</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 8 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Tamil Cinema Hits</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Vijay Music</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">38:22</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Cinema</span>
-                                <span class="badge badge-sm badge-outline">Tamil</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 9 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1487180144351-b8472da7d491?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Hip Hop Cypher</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Rap Battle</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">15:40</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Hip Hop</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 10 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Classical Orchestra</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Symphony Hall</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">1:02:15</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Classical</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 11 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1506157786151-b8491531f063?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Qawwali Night</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Sufi Masters</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">48:30</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Qawwali</span>
-                                <span class="badge badge-sm badge-outline">Regional</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 12 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1619983081563-430f63602796?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Metal Fest 2024</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Iron Brigade</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">55:20</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Metal</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 13 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Bengali Theatre</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Kolkata Arts</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">42:15</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Theatre</span>
-                                <span class="badge badge-sm badge-outline">Bengali</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 14 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">EDM Festival</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by DJ Horizon</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">1:15:30</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">EDM</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 15 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1477233534935-f5e6fe7c1159?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Marathi Folk</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Traditional Artists</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">32:40</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Folk</span>
-                                <span class="badge badge-sm badge-outline">Marathi</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 16 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Indie Rock Show</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Underground Sounds</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">38:55</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Indie</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 17 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Telugu Music Video</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by South Stars</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">25:10</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Pop</span>
-                                <span class="badge badge-sm badge-outline">Telugu</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 18 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1598388993281-cecf8b71a8f8?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <span class="new-badge absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-bold text-white">NEW</span>
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Fusion Beats</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Global Artists</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">20:30</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Fusion</span>
-                                <span class="badge badge-sm badge-outline">Multi</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 19 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Country Music Live</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Nashville Crew</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★☆</div>
-                                <span class="text-xs text-gray-500">44:20</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Country</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Video Card 20 -->
-                    <div class="media-card rounded-2xl overflow-hidden fade-in">
-                        <div class="relative">
-                            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400&h=400&fit=crop" alt="Video Thumbnail" class="media-image">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <div class="bg-white bg-opacity-20 backdrop-blur-sm rounded-full p-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <h3 class="font-bold text-lg mb-1 truncate">Unplugged Sessions</h3>
-                            <p class="text-gray-400 text-sm mb-2 truncate">by Acoustic Legends</p>
-                            <div class="flex items-center justify-between mb-3">
-                                <div class="stars text-sm">★★★★★</div>
-                                <span class="text-xs text-gray-500">36:45</span>
-                            </div>
-                            <div class="flex flex-wrap gap-1 mb-3">
-                                <span class="badge badge-sm badge-outline">Acoustic</span>
-                                <span class="badge badge-sm badge-outline">English</span>
-                            </div>
-                            <button class="btn btn-gradient btn-sm w-full text-white">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                                </svg>
-                                Watch Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                @endforeach
             </div>
-        </section>
+        @else
+            <div class="text-center py-12">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <p class="text-xl text-gray-400">No videos available yet</p>
+                <p class="text-gray-500 mt-2">Check back later for new video releases</p>
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <a href="{{ route('admin.addvideo') }}" class="btn btn-gradient mt-4 text-white">
+                            Add Videos
+                        </a>
+                    @endif
+                @endauth
+            </div>
+        @endif
+    </div>
+</section>
 <!-- Video Grid end -->
 
 

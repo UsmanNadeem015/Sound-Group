@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Admin;  // Note: This is in Admin namespace
 
 use App\Http\Controllers\Controller;
 use App\Models\Video;
@@ -10,8 +10,49 @@ use Illuminate\Support\Str;
 
 class VideoController extends Controller
 {
+    /**
+     * Display videos for frontend (public video page)
+     */
+    public function index(Request $request)
+    {
+        $query = Video::where('is_active', true);
+        
+        // Apply filters if provided
+        if ($request->has('category') && $request->filled('category')) {
+            $category = $request->input('category');
+            
+            switch($category) {
+                case 'album':
+                    $query->orderBy('album');
+                    break;
+                case 'artist':
+                    $query->orderBy('artist');
+                    break;
+                case 'year':
+                    $query->orderBy('year', 'desc');
+                    break;
+                case 'genre':
+                    $query->orderBy('genre');
+                    break;
+                case 'language':
+                    $query->orderBy('language');
+                    break;
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
+        }
+        
+        $videos = $query->get();
+        
+        return view('video', compact('videos'));
+    }
+
+    /**
+     * Store new video (this is your existing method)
+     */
     public function store(Request $request)
     {
+        // Your existing store method...
         // 1. Validation
         $request->validate([
             'videoName' => 'required|string|max:255',

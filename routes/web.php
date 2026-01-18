@@ -9,7 +9,7 @@ use App\Http\Controllers\Admin\MusicController;
 use App\Http\Controllers\Admin\VideoController;
 use App\Http\Controllers\MusicFetchController;
 
-
+Route::get('/Videos', [VideoController::class, 'index'])->name('videos');
 
 Route::get('/', function () {
     return view('home');
@@ -18,10 +18,6 @@ Route::get('/', function () {
 Route::get('/Music', function () {
     return view('music');
 })->name('music');
-
-Route::get('/Videos', function () {
-    return view('video');
-})->name('videos');
 
 Route::get('/About', function () {
     return view('about');
@@ -83,5 +79,12 @@ Route::get('/', function () {
         ->take(5)
         ->get();
     
-    return view('home', compact('latestMusic'));
+    // Fetch latest 5 video tracks
+    $latestVideos = \App\Models\Video::where('is_active', true)
+        ->orderBy('created_at', 'desc')
+        ->take(5)
+        ->get();
+    
+    return view('home', compact('latestMusic', 'latestVideos'));
 })->name('home');
+

@@ -106,12 +106,12 @@
                                                     </svg>
                                                 </a>
                                                 
-                                                <!-- Edit Button (Placeholder for now) -->
-                                                <button class="btn btn-sm btn-outline border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                                        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                                    </svg>
-                                                </button>
+<!-- Edit Button -->
+<a href="{{ route('admin.editvideo', $video->id) }}" class="btn btn-sm btn-outline border-blue-500 text-blue-400 hover:bg-blue-500 hover:text-white">
+    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+    </svg>
+</a>
                                                 
                                                 <!-- Delete Button -->
                                                 <form action="{{ route('admin.deletevideo', $video->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this video?')">

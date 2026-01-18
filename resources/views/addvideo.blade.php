@@ -141,26 +141,23 @@
                                 </select>
                             </div>
 
-                            <!-- Genre -->
-                            <div class="mb-4">
-                                <label for="genre" class="form-label">
-                                    Genre <span class="required">*</span>
-                                </label>
-                                <select id="genre" name="genre" class="select form-input w-full @error('genre') error @enderror" required>
-                                    <option value="" disabled selected>Select Genre</option>
-                                    <option value="Pop" {{ old('genre') == 'Pop' ? 'selected' : '' }}>Pop</option>
-                                    <option value="Rock" {{ old('genre') == 'Rock' ? 'selected' : '' }}>Rock</option>
-                                    <option value="Hip Hop" {{ old('genre') == 'Hip Hop' ? 'selected' : '' }}>Hip Hop</option>
-                                    <option value="Jazz" {{ old('genre') == 'Jazz' ? 'selected' : '' }}>Jazz</option>
-                                    <option value="Classical" {{ old('genre') == 'Classical' ? 'selected' : '' }}>Classical</option>
-                                    <option value="Electronic" {{ old('genre') == 'Electronic' ? 'selected' : '' }}>Electronic</option>
-                                    <option value="Folk" {{ old('genre') == 'Folk' ? 'selected' : '' }}>Folk</option>
-                                    <option value="Romantic" {{ old('genre') == 'Romantic' ? 'selected' : '' }}>Romantic</option>
-                                    <option value="Bhangra" {{ old('genre') == 'Bhangra' ? 'selected' : '' }}>Bhangra</option>
-                                    <option value="Dance" {{ old('genre') == 'Dance' ? 'selected' : '' }}>Dance</option>
-                                    <option value="Concert" {{ old('genre') == 'Concert' ? 'selected' : '' }}>Concert</option>
-                                </select>
-                            </div>
+<!-- Genre -->
+<div class="form-group">
+    <label class="form-label">Genre *</label>
+    <select name="genre" class="select select-bordered w-full" required>
+        <option value="" disabled selected>Select a genre</option>
+        @foreach(\App\Models\Category::where('type', 'genre')->where('is_active', true)->orderBy('name')->get() as $genre)
+            <option value="{{ $genre->name }}" {{ old('genre') == $genre->name ? 'selected' : '' }}>
+                {{ $genre->name }}
+            </option>
+        @endforeach
+        <option value="custom">+ Add New Genre</option>
+    </select>
+    <!-- Hidden input for custom genre -->
+    <div id="customGenreContainer" class="hidden mt-2">
+        <input type="text" name="custom_genre" class="input input-bordered w-full" placeholder="Enter new genre name">
+    </div>
+</div>
 
                             <!-- Language -->
                             <div class="mb-4">
@@ -249,6 +246,29 @@
                 document.getElementById('fileNameDisplay').textContent = file.name;
             }
         }
+            // Handle custom genre selection for video form
+    document.addEventListener('DOMContentLoaded', function() {
+        const genreSelect = document.querySelector('select[name="genre"]');
+        const customContainer = document.getElementById('customGenreContainer');
+        
+        if (genreSelect && customContainer) {
+            // Check initial value
+            if (genreSelect.value === 'custom') {
+                customContainer.classList.remove('hidden');
+            }
+            
+            // Handle change event
+            genreSelect.addEventListener('change', function() {
+                if (this.value === 'custom') {
+                    customContainer.classList.remove('hidden');
+                } else {
+                    customContainer.classList.add('hidden');
+                }
+            });
+        }
+    });
     </script>
+
+
 </body>
 </html>

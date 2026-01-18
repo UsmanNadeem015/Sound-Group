@@ -66,9 +66,12 @@ Route::middleware(['auth', 'role:admin'])->prefix('Dashboard/Admin')->group(func
 
     // viewing videos
     Route::get('/View-Videos', [AdminController::class, 'viewVideos'])->name('admin.viewvideos');
-
     Route::delete('/Video/{id}', [AdminController::class, 'deleteVideo'])->name('admin.deletevideo');
     
+    // Edit Video
+    Route::get('/Edit-Video/{id}', [AdminController::class, 'editVideo'])->name('admin.editvideo');
+    Route::put('/Update-Video/{id}', [AdminController::class, 'updateVideo'])->name('admin.updatevideo');
+
     // Category Management
     Route::get('/Manage-Categories', [AdminController::class, 'manageCategories'])->name('admin.managecategories');
     Route::get('/Add-Category', [AdminController::class, 'addCategory'])->name('admin.addcategory');

@@ -194,58 +194,70 @@ public function updateMusic(Request $request, $id)
     /**
      * Store new video
      */
-    public function storeVideo(Request $request)
-    {
-        // Validate
-        $validatedData = $request->validate([
-            'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-            'videoFile' => 'required|mimes:mp4,avi,mov,mkv|max:512000',
-            'videoName' => 'required|string|max:255',
-            'artist' => 'required|string|max:255',
-            'album' => 'required|string|max:255',
-            'year' => 'required|digits:4',
-            'genre' => 'required|string',
-            'language' => 'required|string',
-            'duration' => 'required|string',
-            'description' => 'nullable|string',
-        ]);
+public function storeVideo(Request $request)
+{
+    // Validate
+    $validatedData = $request->validate([
+        'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        'videoFile' => 'required|mimes:mp4,avi,mov,mkv|max:512000',
+        'videoName' => 'required|string|max:255',
+        'artist' => 'required|string|max:255',
+        'album' => 'required|string|max:255',
+        'year' => 'required|digits:4',
+        'genre' => 'required|string',
+        'language' => 'required|string',
+        'duration' => 'required|string|max:10',
+        'description' => 'nullable|string',
+    ]);
 
-        // Upload thumbnail
-        $thumbnailPath = null;
-        if ($request->hasFile('thumbnail')) {
-            $thumbnail = $request->file('thumbnail');
-            $thumbnailName = time() . '_' . Str::slug($validatedData['videoName']) . '.' . $thumbnail->getClientOriginalExtension();
-            $thumbnailPath = $thumbnail->storeAs('images/videos', $thumbnailName, 'public');
-        }
-
-        // Upload video file
-        $videoFile = $request->file('videoFile');
-        $videoFileName = time() . '_' . Str::slug($validatedData['videoName']) . '.' . $videoFile->getClientOriginalExtension();
-        $videoFilePath = $videoFile->storeAs('videos', $videoFileName, 'public');
-
-        // Create video record
-        $video = Video::create([
-            'title' => $validatedData['videoName'],
-            'slug' => Str::slug($validatedData['videoName']),
-            'description' => $validatedData['description'] ?? null,
-            'artist' => $validatedData['artist'],
-            'album' => $validatedData['album'],
-            'year' => $validatedData['year'],
-            'genre' => $validatedData['genre'],
-            'language' => $validatedData['language'],
-            'duration' => $validatedData['duration'],
-            'file_path' => $videoFilePath,
-            'thumbnail' => $thumbnailPath,
-            'is_new' => true,
-            'is_active' => true,
-        ]);
-
-        // Attach categories
-        $this->attachVideoCategories($video, $validatedData);
-
-        return redirect()->route('admin.dashboard')
-            ->with('success', 'Video added successfully!');
+    // Handle custom genre if selected
+    if ($request->genre === 'custom' && $request->has('custom_genre')) {
+        $validatedData['genre'] = $request->custom_genre;
+        
+        // Also auto-create the category in database
+        $category = Category::firstOrCreate(
+            ['name' => $request->custom_genre, 'type' => 'genre'],
+            ['slug' => Str::slug($request->custom_genre), 'is_active' => true]
+        );
     }
+
+    // Rest of your existing storeVideo code...
+    // Upload thumbnail
+    $thumbnailPath = null;
+    if ($request->hasFile('thumbnail')) {
+        $thumbnail = $request->file('thumbnail');
+        $thumbnailName = time() . '_' . Str::slug($validatedData['videoName']) . '.' . $thumbnail->getClientOriginalExtension();
+        $thumbnailPath = $thumbnail->storeAs('images/videos', $thumbnailName, 'public');
+    }
+
+    // Upload video file
+    $videoFile = $request->file('videoFile');
+    $videoFileName = time() . '_' . Str::slug($validatedData['videoName']) . '.' . $videoFile->getClientOriginalExtension();
+    $videoFilePath = $videoFile->storeAs('videos', $videoFileName, 'public');
+
+    // Create video record
+    $video = Video::create([
+        'title' => $validatedData['videoName'],
+        'slug' => Str::slug($validatedData['videoName']),
+        'description' => $validatedData['description'] ?? null,
+        'artist' => $validatedData['artist'],
+        'album' => $validatedData['album'],
+        'year' => $validatedData['year'],
+        'genre' => $validatedData['genre'],
+        'language' => $validatedData['language'],
+        'duration' => $validatedData['duration'],
+        'file_path' => $videoFilePath,
+        'thumbnail' => $thumbnailPath,
+        'is_new' => true,
+        'is_active' => true,
+    ]);
+
+    // Attach categories
+    $this->attachVideoCategories($video, $validatedData);
+
+    return redirect()->route('admin.dashboard')
+        ->with('success', 'Video added successfully!');
+}
 
     /**
     * View all videos
@@ -253,8 +265,95 @@ public function updateMusic(Request $request, $id)
     public function viewVideos()
     {
         $videos = Video::latest()->get();
-        return view('admin.viewvideos', compact('videos'));
+        return view('viewvideos', compact('videos'));
     }
+
+    /**
+ * Show edit video form
+ */
+public function editVideo($id)
+{
+    $video = Video::findOrFail($id);
+    $categories = Category::where('is_active', true)->get();
+    
+    return view('editvideo', compact('video', 'categories'));
+}
+
+/**
+ * Update video
+ */
+public function updateVideo(Request $request, $id)
+{
+    $video = Video::findOrFail($id);
+    
+    // Validate
+    $validatedData = $request->validate([
+        'thumbnail' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
+        'videoFile' => 'nullable|mimes:mp4,avi,mov,mkv|max:512000',
+        'videoName' => 'required|string|max:255',
+        'artist' => 'required|string|max:255',
+        'album' => 'required|string|max:255',
+        'year' => 'required|digits:4',
+        'genre' => 'required|string',
+        'language' => 'required|string',
+        'duration' => 'required|string|max:10',
+        'description' => 'nullable|string',
+    ]);
+
+    // Handle custom genre if selected
+    if ($request->genre === 'custom' && $request->has('custom_genre')) {
+        $validatedData['genre'] = $request->custom_genre;
+        
+        // Also auto-create the category in database
+        $category = Category::firstOrCreate(
+            ['name' => $request->custom_genre, 'type' => 'genre'],
+            ['slug' => Str::slug($request->custom_genre), 'is_active' => true]
+        );
+    }
+
+    // Update thumbnail if provided
+    if ($request->hasFile('thumbnail')) {
+        // Delete old thumbnail
+        if ($video->thumbnail) {
+            Storage::disk('public')->delete($video->thumbnail);
+        }
+        
+        $thumbnail = $request->file('thumbnail');
+        $thumbnailName = time() . '_' . Str::slug($validatedData['videoName']) . '.' . $thumbnail->getClientOriginalExtension();
+        $thumbnailPath = $thumbnail->storeAs('images/videos', $thumbnailName, 'public');
+        $video->thumbnail = $thumbnailPath;
+    }
+
+    // Update video file if provided
+    if ($request->hasFile('videoFile')) {
+        // Delete old video file
+        Storage::disk('public')->delete($video->file_path);
+        
+        $videoFile = $request->file('videoFile');
+        $videoFileName = time() . '_' . Str::slug($validatedData['videoName']) . '.' . $videoFile->getClientOriginalExtension();
+        $videoFilePath = $videoFile->storeAs('videos', $videoFileName, 'public');
+        $video->file_path = $videoFilePath;
+    }
+
+    // Update video record
+    $video->update([
+        'title' => $validatedData['videoName'],
+        'slug' => Str::slug($validatedData['videoName']),
+        'description' => $validatedData['description'] ?? null,
+        'artist' => $validatedData['artist'],
+        'album' => $validatedData['album'],
+        'year' => $validatedData['year'],
+        'genre' => $validatedData['genre'],
+        'language' => $validatedData['language'],
+        'duration' => $validatedData['duration'],
+    ]);
+
+    // Update categories
+    $this->attachVideoCategories($video, $validatedData);
+
+    return redirect()->route('admin.viewvideos')
+        ->with('success', 'Video updated successfully!');
+}
 
     /**
      * Show manage users page

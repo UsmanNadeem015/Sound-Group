@@ -131,12 +131,12 @@
                             </div>
                             <h3 class="font-bold text-lg mb-2">Manage Reviews</h3>
                             <p class="text-sm text-gray-400 mb-4">Approve user reviews</p>
-                            <div class="flex items-center gap-2 mb-2">
+                            <!-- <div class="flex items-center gap-2 mb-2">
                                 <span class="text-xs text-gray-400">Pending:</span>
                                 <span class="badge badge-warning">
                                     {{ $pendingReviewsCount ?? 0 }}
                                 </span>
-                            </div>
+                            </div> -->
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-auto">
                                 <a href="{{ route('admin.managereviews') }}" class="btn btn-gradient btn-sm text-white w-full">
                                     {{ ($pendingReviewsCount ?? 0) > 0 ? 'Review Now' : 'Manage' }}

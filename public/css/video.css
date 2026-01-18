@@ -190,3 +190,211 @@
         .fade-in:nth-child(7) { animation-delay: 0.35s; }
         .fade-in:nth-child(8) { animation-delay: 0.4s; }
 /* Cards end */
+
+/* ========== EMERGENCY FIXES FOR VIDEO PAGE ========== */
+
+/* 1. Make pseudo-elements non-interactive */
+.media-card::before,
+.media-card::after {
+    pointer-events: none !important;
+}
+
+/* 2. Make all interactive elements clickable */
+.star-btn,
+.submit-review,
+.review-comment,
+.filter-btn,
+.btn-gradient {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 100 !important;
+}
+
+/* 3. Make textarea editable and interactive */
+.review-comment {
+    pointer-events: auto !important;
+    user-select: text !important;
+    -webkit-user-select: text !important;
+    resize: vertical !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    color: #fff !important;
+    padding: 0.75rem !important;
+    border-radius: 0.5rem !important;
+    width: 100% !important;
+    min-height: 80px !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.875rem !important;
+    transition: all 0.3s ease !important;
+}
+
+.review-comment:focus {
+    outline: none !important;
+    border-color: rgba(102, 126, 234, 0.5) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1) !important;
+}
+
+.review-comment::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* 4. Star button styles */
+.star-btn {
+    color: #6b7280 !important;
+    background: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    font-size: 1.25rem !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    transition: all 0.2s ease !important;
+}
+
+.star-btn:hover {
+    color: #fbbf24 !important;
+    transform: scale(1.1) !important;
+}
+
+.star-btn.active {
+    color: #fbbf24 !important;
+}
+
+/* 5. Review button styles */
+.submit-review {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border: none !important;
+    color: white !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.5rem !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+
+.submit-review:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3) !important;
+}
+
+/* 6. Status message styles */
+.status-msg {
+    font-size: 0.75rem !important;
+    margin-top: 0.5rem !important;
+    min-height: 1rem !important;
+    display: block !important;
+}
+
+.status-msg.success {
+    color: #10b981 !important;
+}
+
+.status-msg.error {
+    color: #f5576c !important;
+}
+
+.status-msg.warning {
+    color: #fbbf24 !important;
+}
+
+/* 7. Rating section styles */
+.star-rating {
+    display: flex !important;
+    gap: 0.25rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+/* 8. Make sure card content is above pseudo-elements */
+.media-card > * {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+.media-card .p-4 {
+    pointer-events: auto !important;
+    z-index: 2 !important;
+}
+
+/* 9. Override hover state for interactive elements */
+.media-card:hover .star-btn,
+.media-card:hover .submit-review,
+.media-card:hover .review-comment {
+    pointer-events: auto !important;
+    z-index: 1000 !important;
+}
+
+/* 10. Loading state for review button */
+.submit-review.loading {
+    opacity: 0.7 !important;
+    cursor: not-allowed !important;
+}
+
+/* 11. Rating form section */
+.rating-section {
+    margin-top: 0.5rem !important;
+    padding-top: 0.5rem !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* 12. Force all interactive elements to be visible */
+.star-btn,
+.submit-review,
+.review-comment {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+}
+
+/* 13. Add visual debugging (remove after testing) */
+.star-btn {
+    outline: 1px solid rgba(251, 191, 36, 0.3) !important;
+    border-radius: 4px !important;
+    padding: 2px !important;
+}
+
+/* 14. Ensure card has proper height and spacing */
+.media-card {
+    display: flex !important;
+    flex-direction: column !important;
+    border-radius: 1rem !important;
+}
+
+/* 15. Make sure Play Now/Watch Now button works */
+.btn-gradient[target="_blank"] {
+    pointer-events: auto !important;
+    z-index: 100 !important;
+}
+
+/* 16. User Reviews section styles */
+.user-reviews {
+    max-height: 120px !important;
+    overflow-y: auto !important;
+    padding-right: 8px !important;
+}
+
+.user-reviews::-webkit-scrollbar {
+    width: 4px !important;
+}
+
+.user-reviews::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 2px !important;
+}
+
+.user-reviews::-webkit-scrollbar-thumb {
+    background: rgba(102, 126, 234, 0.5) !important;
+    border-radius: 2px !important;
+}
+
+/* 17. Responsive adjustments */
+@media (max-width: 768px) {
+    .review-comment {
+        min-height: 70px !important;
+        font-size: 0.8rem !important;
+    }
+    
+    .star-btn {
+        font-size: 1.1rem !important;
+    }
+}

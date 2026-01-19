@@ -13,39 +13,62 @@ class VideoController extends Controller
     /**
      * Display videos for frontend (public video page)
      */
-    public function index(Request $request)
-    {
-        $query = Video::where('is_active', true);
+public function index(Request $request)
+{
+    $query = Video::where('is_active', true);
+    
+    // Filter by specific value if provided
+    if ($request->has('filter_value') && $request->filled('filter_value')) {
+        $filterValue = $request->input('filter_value');
+        $category = $request->input('category', 'genre'); // Default to genre
         
-        // Apply filters if provided
-        if ($request->has('category') && $request->filled('category')) {
-            $category = $request->input('category');
-            
-            switch($category) {
-                case 'album':
-                    $query->orderBy('album');
-                    break;
-                case 'artist':
-                    $query->orderBy('artist');
-                    break;
-                case 'year':
-                    $query->orderBy('year', 'desc');
-                    break;
-                case 'genre':
-                    $query->orderBy('genre');
-                    break;
-                case 'language':
-                    $query->orderBy('language');
-                    break;
-            }
-        } else {
-            $query->orderBy('created_at', 'desc');
+        switch($category) {
+            case 'album':
+                $query->where('album', 'like', '%' . $filterValue . '%');
+                break;
+            case 'artist':
+                $query->where('artist', 'like', '%' . $filterValue . '%');
+                break;
+            case 'year':
+                $query->where('year', $filterValue);
+                break;
+            case 'genre':
+                $query->where('genre', 'like', '%' . $filterValue . '%');
+                break;
+            case 'language':
+                $query->where('language', 'like', '%' . $filterValue . '%');
+                break;
         }
-        
-        $videos = $query->get();
-        
-        return view('video', compact('videos'));
     }
+    // Or just order by category
+    elseif ($request->has('category') && $request->filled('category')) {
+        $category = $request->input('category');
+        
+        switch($category) {
+            case 'album':
+                $query->orderBy('album');
+                break;
+            case 'artist':
+                $query->orderBy('artist');
+                break;
+            case 'year':
+                $query->orderBy('year', 'desc');
+                break;
+            case 'genre':
+                $query->orderBy('genre');
+                break;
+            case 'language':
+                $query->orderBy('language');
+                break;
+        }
+    } else {
+        $query->orderBy('created_at', 'desc');
+    }
+    
+    $videos = $query->get();
+    
+    return view('video', compact('videos'));
+}
 
     /**
      * Store new video (this is your existing method)

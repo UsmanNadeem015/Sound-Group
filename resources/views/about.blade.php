@@ -195,7 +195,7 @@
                     </div>
                 </div>
 
-                <!-- Join Us Section -->
+                <!-- Join Us Section
                 <div class="content-card max-w-5xl mx-auto mt-8 text-center bg-gradient-to-r from-purple-900/20 to-pink-900/20">
                     <h2 class="section-title display-font">JOIN OUR COMMUNITY</h2>
                     <p class="text-lg text-gray-300 leading-relaxed mb-6">
@@ -205,7 +205,7 @@
                         <button class="btn btn-gradient btn-lg text-white">Create Account</button>
                         <button class="btn btn-outline btn-lg">Learn More</button>
                     </div>
-                </div>
+                </div> -->
 
                 <!-- Contact Info -->
                 <div class="content-card max-w-5xl mx-auto mt-8">
@@ -222,7 +222,7 @@
                         <div class="text-center">
                             <div class="text-3xl mb-3">📱</div>
                             <h3 class="font-bold mb-2">Phone</h3>
-                            <p class="text-gray-400">+1 (555) 123-4567</p>
+                            <p class="text-gray-400">+923318393259</p>
                         </div>
                         <div class="text-center">
                             <div class="text-3xl mb-3">🌐</div>

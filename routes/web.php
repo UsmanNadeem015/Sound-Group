@@ -11,6 +11,7 @@ use App\Http\Controllers\MusicFetchController;
 use App\Http\Controllers\VideoFetchController;
 use App\Http\Controllers\Api\RatingController;
 use App\Http\Controllers\Api\ReviewController;
+use App\Http\Controllers\Admin\VideoController;
 
 // Main Pages
 Route::get('/', function () {
@@ -28,8 +29,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/Music', [MusicFetchController::class, 'index'])->name('music');
-Route::get('/Videos', [VideoFetchController::class, 'index'])->name('videos');
-
+// Route::get('/Videos', [VideoFetchController::class, 'index'])->name('videos');
+Route::get('/Videos', [VideoController::class, 'index'])->name('videos');
 Route::get('/About', function () {
     return view('about');
 })->name('about');

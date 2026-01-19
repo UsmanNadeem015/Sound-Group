@@ -17,7 +17,7 @@
                             <li><a href="{{ url('/About') }}" class="hover:text-purple-400 transition-colors">About Us</a></li>
                         </ul>
                     </div>
-                    <div>
+                    <!-- <div>
                         <h4 class="font-bold mb-4">Categories</h4>
                         <ul class="space-y-2 text-gray-400">
                             <li><a href="#" class="hover:text-purple-400 transition-colors">By Album</a></li>
@@ -25,7 +25,7 @@
                             <li><a href="#" class="hover:text-purple-400 transition-colors">By Genre</a></li>
                             <li><a href="#" class="hover:text-purple-400 transition-colors">By Language</a></li>
                         </ul>
-                    </div>
+                    </div> -->
                     <div>
                         <h4 class="font-bold mb-4">Connect With Us</h4>
                         <div class="flex gap-4">

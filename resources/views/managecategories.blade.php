@@ -77,8 +77,8 @@
                                         <th class="text-left py-3 px-4 text-gray-400 font-semibold">#</th>
                                         <th class="text-left py-3 px-4 text-gray-400 font-semibold">Name</th>
                                         <th class="text-left py-3 px-4 text-gray-400 font-semibold">Type</th>
-                                        <th class="text-left py-3 px-4 text-gray-400 font-semibold">Music Count</th>
-                                        <th class="text-left py-3 px-4 text-gray-400 font-semibold">Video Count</th>
+                                        <!-- <th class="text-left py-3 px-4 text-gray-400 font-semibold">Music Count</th> -->
+                                        <!-- <th class="text-left py-3 px-4 text-gray-400 font-semibold">Video Count</th> -->
                                         <th class="text-left py-3 px-4 text-gray-400 font-semibold">Status</th>
                                         <th class="text-left py-3 px-4 text-gray-400 font-semibold">Date Added</th>
                                         <th class="text-left py-3 px-4 text-gray-400 font-semibold">Actions</th>
@@ -103,12 +103,12 @@
                                                 {{ ucfirst($category->type) }}
                                             </span>
                                         </td>
-                                        <td class="py-3 px-4">
+                                        <!-- <td class="py-3 px-4">
                                             <span class="text-sm text-gray-400">{{ $category->music_count }}</span>
-                                        </td>
-                                        <td class="py-3 px-4">
+                                        </td> -->
+                                        <!-- <td class="py-3 px-4">
                                             <span class="text-sm text-gray-400">{{ $category->videos_count }}</span>
-                                        </td>
+                                        </td> -->
                                         <td class="py-3 px-4">
                                             @if($category->is_active)
                                                 <span class="px-3 py-1 rounded-full text-xs bg-green-500/20 text-green-300">Active</span>

@@ -18,9 +18,9 @@
 
 <!-- Content Wrapper -->
 <div class="content-wrapper">
-<!-- Navbar start -->
-<x-navbar />
-<!-- Navbar start -->
+<!-- NavBar start -->
+        <x-navbar />
+<!-- NavBar end -->
 
 <!-- Page Header start -->
 <section class="page-header">
@@ -460,7 +460,7 @@
         }
     });
 
-    // Music Player Functionality
+// Music Player Functionality - UPDATED VERSION
 document.addEventListener('DOMContentLoaded', function() {
     // Create audio player element
     const audioPlayer = document.createElement('audio');
@@ -468,67 +468,65 @@ document.addEventListener('DOMContentLoaded', function() {
     audioPlayer.style.display = 'none';
     document.body.appendChild(audioPlayer);
     
-// Create music player UI (ULTRA SIMPLE MOBILE-FIRST)
-const playerUI = document.createElement('div');
-playerUI.id = 'music-player-ui';
-playerUI.innerHTML = `
-    <div class="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-3 z-50 hidden">
-        <div class="flex items-center justify-between">
-            <!-- Song Info (Truncated for mobile) -->
-            <div class="flex items-center space-x-3 flex-1 min-w-0">
-                <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                    </svg>
+    // Create music player UI
+    const playerUI = document.createElement('div');
+    playerUI.id = 'music-player-ui';
+    playerUI.innerHTML = `
+        <div class="custom-player-container player-hidden">
+            <div class="flex items-center justify-between">
+                <!-- Song Info -->
+                <div class="flex items-center space-x-3 flex-1 min-w-0">
+                    <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h4 id="now-playing-title" class="font-semibold text-white text-sm truncate">No song playing</h4>
+                        <p id="now-playing-artist" class="text-xs text-gray-400 truncate">Select a song</p>
+                    </div>
                 </div>
-                <div class="min-w-0 flex-1">
-                    <h4 id="now-playing-title" class="font-semibold text-white text-sm truncate">No song playing</h4>
-                    <p id="now-playing-artist" class="text-xs text-gray-400 truncate">Select a song</p>
+                
+                <!-- Controls -->
+                <div class="flex items-center space-x-2 flex-shrink-0">
+                    <button id="play-pause-btn" class="p-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:opacity-90">
+                        <!-- Play Icon (Visible by default) -->
+                        <svg id="play-icon" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                        </svg>
+                        <!-- Pause Icon (Hidden by default) -->
+                        <svg id="pause-icon" class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" style="display: none;">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    
+                    <button id="close-player-btn" class="p-1 text-gray-400 hover:text-white">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
                 </div>
             </div>
             
-            <!-- Controls -->
-            <div class="flex items-center space-x-2 flex-shrink-0">
-                <button id="play-pause-btn" class="p-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:opacity-90">
-                    <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                    </svg>
-                    <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-                
-                <button id="close-player-btn" class="p-1 text-gray-400 hover:text-white">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
+            <!-- Progress Bar -->
+            <div class="mt-2">
+                <div class="flex items-center space-x-2">
+                    <span class="text-xs text-gray-400 flex-shrink-0" id="current-time">0:00</span>
+                    <input type="range" id="seek-slider" min="0" max="100" value="0" class="flex-1 h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                    <span class="text-xs text-gray-400 flex-shrink-0" id="duration">0:00</span>
+                </div>
             </div>
         </div>
-        
-        <!-- Progress Bar (Below on mobile) -->
-        <div class="mt-2">
-            <div class="flex items-center space-x-2">
-                <span class="text-xs text-gray-400 flex-shrink-0" id="current-time">0:00</span>
-                <input type="range" id="seek-slider" min="0" max="100" value="0" class="flex-1 h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer">
-                <span class="text-xs text-gray-400 flex-shrink-0" id="duration">0:00</span>
-            </div>
-        </div>
-    </div>
-`;
+    `;
     document.body.appendChild(playerUI);
     
     // Get DOM elements
-    const playerUIElement = document.getElementById('music-player-ui');
+    const playerContainer = document.querySelector('.custom-player-container');
     const playPauseBtn = document.getElementById('play-pause-btn');
     const playIcon = document.getElementById('play-icon');
     const pauseIcon = document.getElementById('pause-icon');
     const closePlayerBtn = document.getElementById('close-player-btn');
     const seekSlider = document.getElementById('seek-slider');
-    const volumeSlider = document.getElementById('volume-slider');
-    const muteBtn = document.getElementById('mute-btn');
-    const volumeIcon = document.getElementById('volume-icon');
-    const muteIcon = document.getElementById('mute-icon');
     const currentTimeEl = document.getElementById('current-time');
     const durationEl = document.getElementById('duration');
     const nowPlayingTitle = document.getElementById('now-playing-title');
@@ -537,9 +535,11 @@ playerUI.innerHTML = `
     // Store current playing music
     let currentAudioUrl = '';
     let isPlaying = false;
+    let playerVisible = false;
     
     // Format time (seconds to MM:SS)
     function formatTime(seconds) {
+        if (isNaN(seconds)) return "0:00";
         const mins = Math.floor(seconds / 60);
         const secs = Math.floor(seconds % 60);
         return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
@@ -547,16 +547,45 @@ playerUI.innerHTML = `
     
     // Update time display
     function updateTime() {
-        currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
-        durationEl.textContent = formatTime(audioPlayer.duration);
-        
-        if (audioPlayer.duration) {
+        if (audioPlayer.duration && !isNaN(audioPlayer.duration)) {
+            currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+            durationEl.textContent = formatTime(audioPlayer.duration);
+            
             const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-            seekSlider.value = progress;
+            seekSlider.value = progress || 0;
+        } else {
+            currentTimeEl.textContent = "0:00";
+            durationEl.textContent = "0:00";
         }
     }
     
-    // Play music
+    // Show/hide player - ONLY SHOW WHEN SONG IS PLAYING
+    function showPlayer() {
+        if (currentAudioUrl && isPlaying) {
+            playerContainer.classList.remove('player-hidden');
+            playerVisible = true;
+        }
+    }
+    
+    function hidePlayer() {
+        playerContainer.classList.add('player-hidden');
+        playerVisible = false;
+        isPlaying = false;
+        showPlayIcon();
+    }
+    
+    // Toggle play/pause icons
+    function showPlayIcon() {
+        playIcon.style.display = 'block';
+        pauseIcon.style.display = 'none';
+    }
+    
+    function showPauseIcon() {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = 'block';
+    }
+    
+    // Play music - ONLY SHOW PLAYER WHEN SONG STARTS PLAYING
     function playMusic(audioUrl, title, artist) {
         if (currentAudioUrl !== audioUrl) {
             audioPlayer.src = audioUrl;
@@ -568,9 +597,8 @@ playerUI.innerHTML = `
         audioPlayer.play()
             .then(() => {
                 isPlaying = true;
-                playIcon.classList.add('hidden');
-                pauseIcon.classList.remove('hidden');
-                playerUIElement.querySelector('.fixed').classList.remove('hidden');
+                showPauseIcon();
+                showPlayer(); // Show player when song starts
             })
             .catch(error => {
                 console.error('Error playing audio:', error);
@@ -584,12 +612,12 @@ playerUI.innerHTML = `
         
         if (isPlaying) {
             audioPlayer.pause();
-            playIcon.classList.remove('hidden');
-            pauseIcon.classList.add('hidden');
+            showPlayIcon();
+            // Keep player visible even when paused
         } else {
             audioPlayer.play();
-            playIcon.classList.add('hidden');
-            pauseIcon.classList.remove('hidden');
+            showPauseIcon();
+            showPlayer();
         }
         isPlaying = !isPlaying;
     }
@@ -606,13 +634,12 @@ playerUI.innerHTML = `
     
     // Audio player events
     audioPlayer.addEventListener('timeupdate', updateTime);
-    audioPlayer.addEventListener('loadedmetadata', function() {
-        updateTime();
-    });
+    audioPlayer.addEventListener('loadedmetadata', updateTime);
     audioPlayer.addEventListener('ended', function() {
         isPlaying = false;
-        playIcon.classList.remove('hidden');
-        pauseIcon.classList.add('hidden');
+        showPlayIcon();
+        // Optionally hide player when song ends:
+        // setTimeout(() => hidePlayer(), 2000); // Hide after 2 seconds
     });
     
     // Player controls
@@ -620,91 +647,56 @@ playerUI.innerHTML = `
     
     closePlayerBtn.addEventListener('click', function() {
         audioPlayer.pause();
-        isPlaying = false;
-        playIcon.classList.remove('hidden');
-        pauseIcon.classList.add('hidden');
-        playerUIElement.querySelector('.fixed').classList.add('hidden');
+        currentAudioUrl = ''; // Clear current audio
+        hidePlayer(); // Hide player when closed
     });
     
     // Seek functionality
     seekSlider.addEventListener('input', function() {
-        if (audioPlayer.duration) {
+        if (audioPlayer.duration && !isNaN(audioPlayer.duration)) {
             const seekTime = (this.value / 100) * audioPlayer.duration;
             audioPlayer.currentTime = seekTime;
         }
     });
     
-    // Volume functionality
-    volumeSlider.addEventListener('input', function() {
-        audioPlayer.volume = this.value / 100;
-        if (audioPlayer.volume === 0) {
-            volumeIcon.classList.add('hidden');
-            muteIcon.classList.remove('hidden');
-        } else {
-            volumeIcon.classList.remove('hidden');
-            muteIcon.classList.add('hidden');
-        }
-    });
-    
-    // Mute functionality
-    muteBtn.addEventListener('click', function() {
-        if (audioPlayer.volume > 0) {
-            audioPlayer.volume = 0;
-            volumeSlider.value = 0;
-            volumeIcon.classList.add('hidden');
-            muteIcon.classList.remove('hidden');
-        } else {
-            audioPlayer.volume = 0.8;
-            volumeSlider.value = 80;
-            volumeIcon.classList.remove('hidden');
-            muteIcon.classList.add('hidden');
-        }
-    });
-    
-    // Initialize volume
-    audioPlayer.volume = volumeSlider.value / 100;
-    
-    // Add keyboard shortcuts
+    // FIX: Prevent space bar from pausing music when typing in textareas
     document.addEventListener('keydown', function(e) {
-        if (e.code === 'Space' && currentAudioUrl) {
+        // Check if user is typing in a textarea or input field
+        const activeElement = document.activeElement;
+        const isTyping = activeElement.tagName === 'TEXTAREA' || 
+                         activeElement.tagName === 'INPUT' ||
+                         activeElement.isContentEditable;
+        
+        // Only handle space bar for music control if NOT typing
+        if (e.code === 'Space' && currentAudioUrl && !isTyping) {
             e.preventDefault();
             togglePlayPause();
         }
         
-        // Left/Right arrow for seek
-        if (e.code === 'ArrowLeft' && currentAudioUrl) {
-            e.preventDefault();
-            audioPlayer.currentTime = Math.max(0, audioPlayer.currentTime - 5);
-        }
-        
-        if (e.code === 'ArrowRight' && currentAudioUrl) {
-            e.preventDefault();
-            audioPlayer.currentTime = Math.min(audioPlayer.duration, audioPlayer.currentTime + 5);
-        }
-        
-        // Up/Down arrow for volume
-        if (e.code === 'ArrowUp' && currentAudioUrl) {
-            e.preventDefault();
-            const newVolume = Math.min(100, audioPlayer.volume * 100 + 10);
-            audioPlayer.volume = newVolume / 100;
-            volumeSlider.value = newVolume;
-            if (newVolume > 0) {
-                volumeIcon.classList.remove('hidden');
-                muteIcon.classList.add('hidden');
+        // Left/Right arrow for seek - only if not typing
+        if (!isTyping && currentAudioUrl) {
+            if (e.code === 'ArrowLeft') {
+                e.preventDefault();
+                audioPlayer.currentTime = Math.max(0, audioPlayer.currentTime - 5);
             }
-        }
-        
-        if (e.code === 'ArrowDown' && currentAudioUrl) {
-            e.preventDefault();
-            const newVolume = Math.max(0, audioPlayer.volume * 100 - 10);
-            audioPlayer.volume = newVolume / 100;
-            volumeSlider.value = newVolume;
-            if (newVolume === 0) {
-                volumeIcon.classList.add('hidden');
-                muteIcon.classList.remove('hidden');
+            
+            if (e.code === 'ArrowRight') {
+                e.preventDefault();
+                audioPlayer.currentTime = Math.min(audioPlayer.duration, audioPlayer.currentTime + 5);
             }
         }
     });
+    
+    // Initialize - player starts hidden
+    hidePlayer();
+    showPlayIcon();
+    
+    // Optional: Add auto-hide when no song is playing for 10 seconds
+    setInterval(function() {
+        if (!currentAudioUrl && playerVisible) {
+            hidePlayer();
+        }
+    }, 10000);
 });
 </script>
 

@@ -110,10 +110,6 @@
                             <h3 class="font-bold text-lg mb-1 truncate">{{ $song->title }}</h3>
                             <p class="text-gray-400 text-sm mb-2 truncate">by {{ $song->artist }}</p>
                             <div class="flex items-center justify-between">
-                                <div class="stars text-sm text-yellow-400">
-                                    <!-- Placeholder for ratings - you can add ratings later -->
-                                    ★★★★☆
-                                </div>
                                 <span class="text-xs text-gray-500">{{ $song->year ?? 'N/A' }} | {{ $song->duration ?? 'N/A' }}</span>
                             </div>
                             <div class="mt-3">
@@ -180,10 +176,7 @@
                             <h3 class="font-bold text-lg mb-1 truncate">{{ $video->title }}</h3>
                             <p class="text-gray-400 text-sm mb-2 truncate">by {{ $video->artist }}</p>
                             <div class="flex items-center justify-between">
-                                <div class="stars text-sm text-yellow-400">
-                                    <!-- Placeholder for ratings - you can add ratings later -->
-                                    ★★★★☆
-                                </div>
+
                                 <span class="text-xs text-gray-500">{{ $video->year ?? 'N/A' }} | {{ $video->duration ?? 'N/A' }}</span>
                             </div>
                             <div class="mt-3">

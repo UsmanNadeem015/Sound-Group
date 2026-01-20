@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
-
 class UserController extends Controller
 {
     /**
@@ -28,7 +27,7 @@ class UserController extends Controller
     }
 
     /**
-     * Update user profile
+     * Update user profile - KEEP THIS ONE ONLY
      */
     public function update(Request $request)
     {
@@ -58,8 +57,12 @@ class UserController extends Controller
             $user->password = Hash::make($validatedData['new_password']);
         }
 
+        // Save the changes to database
+        $user->save();
 
         return redirect()->route('user.dashboard')
             ->with('success', 'Profile updated successfully!');
     }
+    
+    // REMOVE THE SECOND update() METHOD BELOW THIS LINE
 }

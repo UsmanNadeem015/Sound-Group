@@ -45,7 +45,7 @@
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('admin.storevideo') }}" enctype="multipart/form-data">
+                    <form method="POST" action="{{ route('admin.storevideo') }}" enctype="multipart/form-data" id="videoForm">
                         @csrf
 
                         <!-- Thumbnail Upload -->
@@ -75,7 +75,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
                                 </svg>
                                 <p class="text-gray-400" id="fileNameDisplay">Click to upload video file</p>
-                                <p class="text-sm text-gray-500 mt-2">MP4, AVI, MOV, MKV (Max 500MB)</p>
+                                <p class="text-sm text-gray-500 mt-2">MP4, AVI, MOV, MKV (Max 600MB)</p>
                             </div>
                         </div>
 
@@ -128,69 +128,70 @@
                                 />
                             </div>
 
-                            <!-- Year -->
-                            <div class="mb-4">
-                                <label for="year" class="form-label">
-                                    Year <span class="required">*</span>
-                                </label>
-                                <select id="year" name="year" class="select form-input w-full @error('year') error @enderror" required>
-                                    <option value="" disabled selected>Select Year</option>
-                                    @for ($y = date('Y'); $y >= 2000; $y--)
-                                        <option value="{{ $y }}" {{ old('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
-                                    @endfor
+                            <!-- Genre -->
+                            <div class="form-group">
+                                <label class="form-label">Genre *</label>
+                                <select name="genre" class="select select-bordered w-full" required>
+                                    <option value="" disabled selected>Select a genre</option>
+                                    @foreach(\App\Models\Category::where('type', 'genre')->where('is_active', true)->orderBy('name')->get() as $genre)
+                                        <option value="{{ $genre->name }}" {{ old('genre') == $genre->name ? 'selected' : '' }}>
+                                            {{ $genre->name }}
+                                        </option>
+                                    @endforeach
+                                    <option value="custom">+ Add New Genre</option>
                                 </select>
+                                <!-- Hidden input for custom genre -->
+                                <div id="customGenreContainer" class="hidden mt-2">
+                                    <input type="text" name="custom_genre" class="input input-bordered w-full" placeholder="Enter new genre name">
+                                </div>
                             </div>
 
-<!-- Genre -->
-<div class="form-group">
-    <label class="form-label">Genre *</label>
-    <select name="genre" class="select select-bordered w-full" required>
-        <option value="" disabled selected>Select a genre</option>
-        @foreach(\App\Models\Category::where('type', 'genre')->where('is_active', true)->orderBy('name')->get() as $genre)
-            <option value="{{ $genre->name }}" {{ old('genre') == $genre->name ? 'selected' : '' }}>
-                {{ $genre->name }}
-            </option>
-        @endforeach
-        <option value="custom">+ Add New Genre</option>
-    </select>
-    <!-- Hidden input for custom genre -->
-    <div id="customGenreContainer" class="hidden mt-2">
-        <input type="text" name="custom_genre" class="input input-bordered w-full" placeholder="Enter new genre name">
-    </div>
-</div>
+                            <!-- Language -->
+                            <div class="form-group">
+                                <label class="form-label">Language *</label>
+                                <select name="language" class="select select-bordered w-full" required>
+                                    <option value="" disabled selected>Select a language</option>
+                                    @foreach(\App\Models\Category::where('type', 'language')->where('is_active', true)->orderBy('name')->get() as $language)
+                                        <option value="{{ $language->name }}" {{ old('language') == $language->name ? 'selected' : '' }}>
+                                            {{ $language->name }}
+                                        </option>
+                                    @endforeach
+                                    <option value="custom">+ Add New Language</option>
+                                </select>
+                                <!-- Hidden input for custom language -->
+                                <div id="customLanguageContainer" class="hidden mt-2">
+                                    <input type="text" name="custom_language" class="input input-bordered w-full" placeholder="Enter new language name">
+                                </div>
+                            </div>
 
-<!-- Language -->
-<div class="form-group">
-    <label class="form-label">Language *</label>
-    <select name="language" class="select select-bordered w-full" required>
-        <option value="" disabled selected>Select a language</option>
-        @foreach(\App\Models\Category::where('type', 'language')->where('is_active', true)->orderBy('name')->get() as $language)
-            <option value="{{ $language->name }}" {{ old('language') == $language->name ? 'selected' : '' }}>
-                {{ $language->name }}
-            </option>
-        @endforeach
-        <option value="custom">+ Add New Language</option>
-    </select>
-    <!-- Hidden input for custom language -->
-    <div id="customLanguageContainer" class="hidden mt-2">
-        <input type="text" name="custom_language" class="input input-bordered w-full" placeholder="Enter new language name">
-    </div>
-</div>
+                            <!-- Year -->
+                            <div class="form-group">
+                                <label class="form-label">Year *</label>
+                                <select name="year" class="select select-bordered w-full" required>
+                                    <option value="" disabled selected>Select Year</option>
+                                    @foreach(\App\Models\Category::where('type', 'year')->where('is_active', true)->orderBy('name', 'desc')->get() as $yearCategory)
+                                        <option value="{{ $yearCategory->name }}" {{ old('year') == $yearCategory->name ? 'selected' : '' }}>
+                                            {{ $yearCategory->name }}
+                                        </option>
+                                    @endforeach
+                                    <option value="custom">+ Add New Year</option>
+                                </select>
+                                <!-- Hidden input for custom year -->
+                                <div id="customYearContainer" class="hidden mt-2">
+                                    <input type="text" name="custom_year" class="input input-bordered w-full" 
+                                           placeholder="Enter new year (e.g., 1998)" 
+                                           pattern="\d{4}" 
+                                           title="Enter a 4-digit year">
+                                    <p class="text-sm text-gray-400 mt-1">Enter a 4-digit year (e.g., 1998, 2005)</p>
+                                </div>
+                            </div>
 
                             <!-- Duration -->
-                            <div class="mb-4">
-                                <label for="duration" class="form-label">
-                                    Duration <span class="required">*</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="duration" 
-                                    name="duration" 
-                                    class="input form-input w-full @error('duration') error @enderror" 
-                                    placeholder="e.g., 45:32"
-                                    value="{{ old('duration') }}"
-                                    required
-                                />
+                            <div class="form-group">
+                                <label class="form-label">Duration *</label>
+                                <input type="text" name="duration" class="input input-bordered w-full" 
+                                       value="{{ old('duration') }}" required placeholder="3:45">
+                                <p class="text-sm text-gray-400 mt-1">Format: MM:SS or HH:MM:SS</p>
                             </div>
                         </div>
 
@@ -250,49 +251,118 @@
                 document.getElementById('fileNameDisplay').textContent = file.name;
             }
         }
-            // Handle custom genre selection for video form
-    document.addEventListener('DOMContentLoaded', function() {
-        const genreSelect = document.querySelector('select[name="genre"]');
-        const customContainer = document.getElementById('customGenreContainer');
-        
-        if (genreSelect && customContainer) {
-            // Check initial value
-            if (genreSelect.value === 'custom') {
-                customContainer.classList.remove('hidden');
-            }
+
+        // Handle custom genre selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const genreSelect = document.querySelector('select[name="genre"]');
+            const customGenreContainer = document.getElementById('customGenreContainer');
             
-            // Handle change event
-            genreSelect.addEventListener('change', function() {
-                if (this.value === 'custom') {
-                    customContainer.classList.remove('hidden');
-                } else {
-                    customContainer.classList.add('hidden');
+            if (genreSelect && customGenreContainer) {
+                if (genreSelect.value === 'custom') {
+                    customGenreContainer.classList.remove('hidden');
+                }
+                
+                genreSelect.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        customGenreContainer.classList.remove('hidden');
+                    } else {
+                        customGenreContainer.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Handle custom language selection
+            const languageSelect = document.querySelector('select[name="language"]');
+            const customLanguageContainer = document.getElementById('customLanguageContainer');
+            
+            if (languageSelect && customLanguageContainer) {
+                if (languageSelect.value === 'custom') {
+                    customLanguageContainer.classList.remove('hidden');
+                }
+                
+                languageSelect.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        customLanguageContainer.classList.remove('hidden');
+                    } else {
+                        customLanguageContainer.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Handle custom year selection
+            const yearSelect = document.querySelector('select[name="year"]');
+            const customYearContainer = document.getElementById('customYearContainer');
+            
+            if (yearSelect && customYearContainer) {
+                if (yearSelect.value === 'custom') {
+                    customYearContainer.classList.remove('hidden');
+                }
+                
+                yearSelect.addEventListener('change', function() {
+                    if (this.value === 'custom') {
+                        customYearContainer.classList.remove('hidden');
+                    } else {
+                        customYearContainer.classList.add('hidden');
+                    }
+                });
+            }
+
+            // Handle form submission for custom fields
+            const form = document.getElementById('videoForm');
+            form.addEventListener('submit', function(e) {
+                // Handle custom year
+                const yearSelect = document.querySelector('select[name="year"]');
+                if (yearSelect.value === 'custom') {
+                    const customYearInput = document.querySelector('input[name="custom_year"]');
+                    if (!customYearInput.value.trim()) {
+                        e.preventDefault();
+                        alert('Please enter a custom year');
+                        customYearInput.focus();
+                        return;
+                    }
+                    // Create a hidden input to send the custom year value
+                    const hiddenYearInput = document.createElement('input');
+                    hiddenYearInput.type = 'hidden';
+                    hiddenYearInput.name = 'year';
+                    hiddenYearInput.value = customYearInput.value;
+                    form.appendChild(hiddenYearInput);
+                }
+
+                // Handle custom genre
+                const genreSelect = document.querySelector('select[name="genre"]');
+                if (genreSelect.value === 'custom') {
+                    const customGenreInput = document.querySelector('input[name="custom_genre"]');
+                    if (!customGenreInput.value.trim()) {
+                        e.preventDefault();
+                        alert('Please enter a custom genre');
+                        customGenreInput.focus();
+                        return;
+                    }
+                    const hiddenGenreInput = document.createElement('input');
+                    hiddenGenreInput.type = 'hidden';
+                    hiddenGenreInput.name = 'genre';
+                    hiddenGenreInput.value = customGenreInput.value;
+                    form.appendChild(hiddenGenreInput);
+                }
+
+                // Handle custom language
+                const languageSelect = document.querySelector('select[name="language"]');
+                if (languageSelect.value === 'custom') {
+                    const customLanguageInput = document.querySelector('input[name="custom_language"]');
+                    if (!customLanguageInput.value.trim()) {
+                        e.preventDefault();
+                        alert('Please enter a custom language');
+                        customLanguageInput.focus();
+                        return;
+                    }
+                    const hiddenLanguageInput = document.createElement('input');
+                    hiddenLanguageInput.type = 'hidden';
+                    hiddenLanguageInput.name = 'language';
+                    hiddenLanguageInput.value = customLanguageInput.value;
+                    form.appendChild(hiddenLanguageInput);
                 }
             });
-        }
-    });
-
-    // Handle custom language selection
-const languageSelect = document.querySelector('select[name="language"]');
-const customLanguageContainer = document.getElementById('customLanguageContainer');
-
-if (languageSelect && customLanguageContainer) {
-    // Check initial value
-    if (languageSelect.value === 'custom') {
-        customLanguageContainer.classList.remove('hidden');
-    }
-    
-    // Handle change event
-    languageSelect.addEventListener('change', function() {
-        if (this.value === 'custom') {
-            customLanguageContainer.classList.remove('hidden');
-        } else {
-            customLanguageContainer.classList.add('hidden');
-        }
-    });
-}
+        });
     </script>
-
-
 </body>
 </html>

@@ -138,11 +138,19 @@
     </div>
 </div>
 
-                        <!-- Description -->
-                        <div class="form-group mt-6">
-                            <label class="form-label">Description</label>
-                            <textarea name="description" class="textarea textarea-bordered w-full" rows="4">{{ old('description', $music->description) }}</textarea>
-                        </div>
+<!-- ADD THIS DURATION FIELD -->
+<div class="form-group">
+    <label class="form-label">Duration *</label>
+    <input type="text" name="duration" class="input input-bordered w-full" 
+           value="{{ old('duration', $music->duration) }}" required placeholder="3:45">
+    <p class="text-sm text-gray-400 mt-1">Format: MM:SS or HH:MM:SS</p>
+</div>
+
+<!-- Description -->
+<div class="form-group mt-6">
+    <label class="form-label">Description</label>
+    <textarea name="description" class="textarea textarea-bordered w-full" rows="4">{{ old('description', $music->description) }}</textarea>
+</div>
 
                         <!-- Form Actions -->
                         <div class="flex gap-4 mt-8">

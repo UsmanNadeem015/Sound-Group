@@ -80,109 +80,122 @@
                         </div>
 
                         <div class="grid md:grid-cols-2 gap-4">
-                            <!-- Music Name -->
-                            <div class="mb-4">
-                                <label for="musicName" class="form-label">
-                                    Music Name <span class="required">*</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="musicName" 
-                                    name="musicName" 
-                                    class="input form-input w-full @error('musicName') error @enderror" 
-                                    placeholder="Enter music name"
-                                    value="{{ old('musicName') }}"
-                                    required
-                                />
-                            </div>
-
-                            <!-- Artist -->
-                            <div class="mb-4">
-                                <label for="artist" class="form-label">
-                                    Artist <span class="required">*</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="artist" 
-                                    name="artist" 
-                                    class="input form-input w-full @error('artist') error @enderror" 
-                                    placeholder="Enter artist name"
-                                    value="{{ old('artist') }}"
-                                    required
-                                />
-                            </div>
-
-                            <!-- Album -->
-                            <div class="mb-4">
-                                <label for="album" class="form-label">
-                                    Album <span class="required">*</span>
-                                </label>
-                                <input 
-                                    type="text" 
-                                    id="album" 
-                                    name="album" 
-                                    class="input form-input w-full @error('album') error @enderror" 
-                                    placeholder="Enter album name"
-                                    value="{{ old('album') }}"
-                                    required
-                                />
-                            </div>
-
-                            <!-- Year -->
-                            <div class="mb-4">
-                                <label for="year" class="form-label">
-                                    Year <span class="required">*</span>
-                                </label>
-                                <select id="year" name="year" class="select form-input w-full @error('year') error @enderror" required>
-                                    <option value="" disabled selected>Select Year</option>
-                                    @for ($y = date('Y'); $y >= 2000; $y--)
-                                        <option value="{{ $y }}" {{ old('year') == $y ? 'selected' : '' }}>{{ $y }}</option>
-                                    @endfor
-                                </select>
-                            </div>
-
-<!-- Genre -->
-<div class="form-group">
-    <label class="form-label">Genre *</label>
-    <select name="genre" class="select select-bordered w-full" required>
-        <option value="" disabled selected>Select a genre</option>
-        @foreach(\App\Models\Category::where('type', 'genre')->where('is_active', true)->orderBy('name')->get() as $genre)
-            <option value="{{ $genre->name }}" {{ old('genre') == $genre->name ? 'selected' : '' }}>
-                {{ $genre->name }}
-            </option>
-        @endforeach
-        <option value="custom">+ Add New Genre</option>
-    </select>
-    <!-- Hidden input for custom genre -->
-    <div id="customGenreContainer" class="hidden mt-2">
-        <input type="text" name="custom_genre" class="input input-bordered w-full" placeholder="Enter new genre name">
+    <!-- Music Name -->
+    <div class="mb-4">
+        <label for="musicName" class="form-label">
+            Music Name <span class="required">*</span>
+        </label>
+        <input 
+            type="text" 
+            id="musicName" 
+            name="musicName" 
+            class="input form-input w-full @error('musicName') error @enderror" 
+            placeholder="Enter music name"
+            value="{{ old('musicName') }}"
+            required
+        />
     </div>
-</div>
 
-<!-- Language -->
-<div class="form-group">
-    <label class="form-label">Language *</label>
-    <select name="language" class="select select-bordered w-full" required>
-        <option value="" disabled selected>Select a language</option>
-        @foreach(\App\Models\Category::where('type', 'language')->where('is_active', true)->orderBy('name')->get() as $language)
-            <option value="{{ $language->name }}" {{ old('language') == $language->name ? 'selected' : '' }}>
-                {{ $language->name }}
-            </option>
-        @endforeach
-        <option value="custom">+ Add New Language</option>
-    </select>
-    <!-- Hidden input for custom language -->
-    <div id="customLanguageContainer" class="hidden mt-2">
-        <input type="text" name="custom_language" class="input input-bordered w-full" placeholder="Enter new language name">
+    <!-- Artist -->
+    <div class="mb-4">
+        <label for="artist" class="form-label">
+            Artist <span class="required">*</span>
+        </label>
+        <input 
+            type="text" 
+            id="artist" 
+            name="artist" 
+            class="input form-input w-full @error('artist') error @enderror" 
+            placeholder="Enter artist name"
+            value="{{ old('artist') }}"
+            required
+        />
     </div>
-</div>
 
-<!-- Duration -->
-<div class="form-group">
-    <label class="form-label">Duration *</label>
-    <input type="text" name="duration" class="input input-bordered w-full" 
-           value="{{ old('duration') }}" required placeholder="3:45">
-    <p class="text-sm text-gray-400 mt-1">Format: MM:SS or HH:MM:SS</p>
+    <!-- Album -->
+    <div class="mb-4">
+        <label for="album" class="form-label">
+            Album <span class="required">*</span>
+        </label>
+        <input 
+            type="text" 
+            id="album" 
+            name="album" 
+            class="input form-input w-full @error('album') error @enderror" 
+            placeholder="Enter album name"
+            value="{{ old('album') }}"
+            required
+        />
+    </div>
+
+    <!-- Year -->
+    <div class="mb-4">
+        <label for="year" class="form-label">
+            Year <span class="required">*</span>
+        </label>
+        <select id="year" name="year" class="select form-input w-full @error('year') error @enderror" required>
+            <option value="" disabled selected>Select Year</option>
+            @foreach(\App\Models\Category::where('type', 'year')->where('is_active', true)->orderBy('name', 'desc')->get() as $yearCategory)
+                <option value="{{ $yearCategory->name }}" {{ old('year') == $yearCategory->name ? 'selected' : '' }}>
+                    {{ $yearCategory->name }}
+                </option>
+            @endforeach
+            <option value="custom">+ Add New Year</option>
+        </select>
+        
+        <!-- Hidden input for custom year -->
+        <div id="customYearContainer" class="hidden mt-2">
+            <input type="text" name="custom_year" class="input input-bordered w-full" 
+                   placeholder="Enter new year (e.g., 1998)" 
+                   pattern="\d{4}" 
+                   title="Enter a 4-digit year">
+            <p class="text-sm text-gray-400 mt-1">Enter a 4-digit year (e.g., 1998, 2005)</p>
+        </div>
+    </div>
+
+    <!-- Genre -->
+    <div class="form-group">
+        <label class="form-label">Genre *</label>
+        <select name="genre" class="select select-bordered w-full" required>
+            <option value="" disabled selected>Select a genre</option>
+            @foreach(\App\Models\Category::where('type', 'genre')->where('is_active', true)->orderBy('name')->get() as $genre)
+                <option value="{{ $genre->name }}" {{ old('genre') == $genre->name ? 'selected' : '' }}>
+                    {{ $genre->name }}
+                </option>
+            @endforeach
+            <option value="custom">+ Add New Genre</option>
+        </select>
+        <!-- Hidden input for custom genre -->
+        <div id="customGenreContainer" class="hidden mt-2">
+            <input type="text" name="custom_genre" class="input input-bordered w-full" placeholder="Enter new genre name">
+        </div>
+    </div>
+
+    <!-- Language -->
+    <div class="form-group">
+        <label class="form-label">Language *</label>
+        <select name="language" class="select select-bordered w-full" required>
+            <option value="" disabled selected>Select a language</option>
+            @foreach(\App\Models\Category::where('type', 'language')->where('is_active', true)->orderBy('name')->get() as $language)
+                <option value="{{ $language->name }}" {{ old('language') == $language->name ? 'selected' : '' }}>
+                    {{ $language->name }}
+                </option>
+            @endforeach
+            <option value="custom">+ Add New Language</option>
+        </select>
+        <!-- Hidden input for custom language -->
+        <div id="customLanguageContainer" class="hidden mt-2">
+            <input type="text" name="custom_language" class="input input-bordered w-full" placeholder="Enter new language name">
+        </div>
+    </div>
+
+    <!-- Duration -->
+    <div class="form-group">
+        <label class="form-label">Duration *</label>
+        <input type="text" name="duration" class="input input-bordered w-full" 
+               value="{{ old('duration') }}" required placeholder="3:45">
+        <p class="text-sm text-gray-400 mt-1">Format: MM:SS or HH:MM:SS</p>
+    </div>
 </div>
 
                         <!-- Description (Optional) -->
@@ -270,6 +283,32 @@ if (languageSelect && customLanguageContainer) {
         }
     });
 }
+
+// Handle custom year selection
+const yearSelect = document.querySelector('select[name="year"]');
+const customYearContainer = document.getElementById('customYearContainer');
+
+if (yearSelect && customYearContainer) {
+    // Check initial value
+    if (yearSelect.value === 'custom') {
+        customYearContainer.classList.remove('hidden');
+    }
+    
+    // Handle change event
+    yearSelect.addEventListener('change', function() {
+        if (this.value === 'custom') {
+            customYearContainer.classList.remove('hidden');
+            // Make custom year field required
+            customYearContainer.querySelector('input').required = true;
+        } else {
+            customYearContainer.classList.add('hidden');
+            // Remove required attribute
+            customYearContainer.querySelector('input').required = false;
+        }
+    });
+}
+
+
     </script>
 
 

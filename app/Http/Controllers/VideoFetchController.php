@@ -9,47 +9,63 @@ class VideoFetchController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Video::with(['categories', 'creator'])
-            ->where('is_active', true);
-
-        // Add filters similar to your music controller
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('artist', 'like', "%{$search}%");
+        $query = Video::where('is_active', true);
+        
+        // SEARCH FUNCTIONALITY - Similar to MusicFetchController
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('artist', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('album', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('year', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('genre', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('language', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('description', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('duration', 'LIKE', "%{$searchTerm}%");
             });
         }
-
-        // Filter by category
-        if ($request->has('category')) {
-            $query->whereHas('categories', function($q) use ($request) {
-                $q->where('name', $request->category);
-            });
+        
+        // Apply category filter if provided (from URL parameter 'category')
+        if ($request->has('category') && $request->filled('category')) {
+            $category = $request->input('category');
+            switch($category) {
+                case 'album':
+                    $query->orderBy('album');
+                    break;
+                case 'artist':
+                    $query->orderBy('artist');
+                    break;
+                case 'year':
+                    $query->orderBy('year', 'desc');
+                    break;
+                case 'genre':
+                    $query->orderBy('genre');
+                    break;
+                case 'language':
+                    $query->orderBy('language');
+                    break;
+            }
+        } else {
+            $query->orderBy('created_at', 'desc');
         }
-
-        // Filter by year
-        if ($request->has('year')) {
-            $query->where('year', $request->year);
-        }
-
-        // Filter by genre
-        if ($request->has('genre')) {
-            $query->where('genre', $request->genre);
-        }
-
-        // Filter by language
-        if ($request->has('language')) {
-            $query->where('language', $request->language);
-        }
-
-        // Sort options
-        $sortBy = $request->get('sort_by', 'created_at');
-        $sortOrder = $request->get('sort_order', 'desc');
-        $query->orderBy($sortBy, $sortOrder);
-
-        $videos = $query->paginate($request->get('per_page', 20));
-
+        
+        // Use pagination with search parameters
+        $videos = $query->paginate(12)->withQueryString();
+        
+        // Add additional data for display - similar to MusicFetchController
+        $videos->getCollection()->transform(function($video) {
+            // Use actual duration from database
+            $video->duration = $video->duration ?? 'N/A';
+            
+            // Add other display properties
+            $video->is_new_badge = $video->is_new ?? false;
+            $video->average_rating = $video->average_rating ?? 0;
+            
+            return $video;
+        });
+        
         return view('video', compact('videos'));
     }
 }

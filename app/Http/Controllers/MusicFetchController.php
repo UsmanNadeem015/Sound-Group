@@ -10,6 +10,22 @@ class MusicFetchController extends Controller
     {
         $query = Music::where('is_active', true);
         
+        // SEARCH FUNCTIONALITY
+        if ($request->has('search') && !empty($request->search)) {
+            $searchTerm = $request->search;
+            
+            $query->where(function($q) use ($searchTerm) {
+                $q->where('title', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('artist', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('album', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('year', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('genre', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('language', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('description', 'LIKE', "%{$searchTerm}%")
+                  ->orWhere('duration', 'LIKE', "%{$searchTerm}%"); // Added duration to search
+            });
+        }
+        
         // Apply category filter if provided
         if ($request->has('category') && $request->filled('category')) {
             $category = $request->input('category');
@@ -34,21 +50,23 @@ class MusicFetchController extends Controller
             $query->orderBy('created_at', 'desc');
         }
         
-        $music = $query->get();
+        // Use pagination
+        $music = $query->paginate(12)->withQueryString();
         
-        // Add additional data for display
-        $music = $music->map(function($song) {
-            // Calculate duration (you need to store this in your database)
-            // For now, let's add a placeholder
-            $song->duration = '3:45'; // Placeholder - you need to store actual duration
+        // Add additional data for display - FIX DURATION DISPLAY
+        $music->getCollection()->transform(function($song) {
+            // Use actual duration from database
+            $song->duration = $song->duration ?? 'N/A'; // Use 'N/A' only if null
             
             // Add other display properties
             $song->is_new_badge = $song->is_new ?? false;
-            $song->average_rating = $song->average_rating ?? 4; // Placeholder
+            $song->average_rating = $song->average_rating ?? 0;
             
             return $song;
         });
         
         return view('music', compact('music'));
     }
+
+
 }

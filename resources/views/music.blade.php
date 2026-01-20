@@ -35,17 +35,92 @@
 <section class="py-8">
     <div class="container mx-auto px-4">
         <div class="filter-section">
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <form action="{{ route('music') }}" method="GET" class="max-w-2xl mx-auto">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            name="search" 
+                            id="musicSearch"
+                            value="{{ request('search') }}"
+                            placeholder="Search music by title, artist, album, year, or genre..." 
+                            class="w-full pl-12 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        >
+                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        @if(request('search'))
+                        <a href="{{ route('music') }}" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </a>
+                        @endif
+                    </div>
+                    <div class="mt-3 flex flex-wrap gap-2 justify-center">
+                        <button type="submit" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+                            Search
+                        </button>
+                        @if(request('search') || request('category'))
+                        <a href="{{ route('music') }}" class="px-4 py-2 bg-gray-700 text-white rounded-full text-sm font-semibold hover:bg-gray-600 transition-colors">
+                            Clear All
+                        </a>
+                        @endif
+                    </div>
+                </form>
+            </div>
+
             <!-- Filter by Category -->
             <div class="text-center">
                 <h3 class="text-lg font-semibold mb-4">Filter by Category</h3>
                 <div class="flex flex-wrap gap-2 justify-center">
-                    <a href="{{ route('music') }}" class="filter-btn {{ !request('category') ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">All</a>
-                    <a href="{{ route('music', ['category' => 'album']) }}" class="filter-btn {{ request('category') == 'album' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Album</a>
-                    <a href="{{ route('music', ['category' => 'artist']) }}" class="filter-btn {{ request('category') == 'artist' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Artist</a>
-                    <a href="{{ route('music', ['category' => 'year']) }}" class="filter-btn {{ request('category') == 'year' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Year</a>
-                    <a href="{{ route('music', ['category' => 'genre']) }}" class="filter-btn {{ request('category') == 'genre' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Genre</a>
-                    <a href="{{ route('music', ['category' => 'language']) }}" class="filter-btn {{ request('category') == 'language' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Language</a>
+                    @php
+                        $currentCategory = request('category');
+                        $currentSearch = request('search');
+                    @endphp
+                    
+                    <a href="{{ route('music') }}{{ $currentSearch ? '?search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ !$currentCategory ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        All
+                    </a>
+                    <a href="{{ route('music') }}?category=album{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'album' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Album
+                    </a>
+                    <a href="{{ route('music') }}?category=artist{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'artist' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Artist
+                    </a>
+                    <a href="{{ route('music') }}?category=year{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'year' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Year
+                    </a>
+                    <a href="{{ route('music') }}?category=genre{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'genre' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Genre
+                    </a>
+                    <a href="{{ route('music') }}?category=language{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'language' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Language
+                    </a>
                 </div>
+                
+                @if(request('search') || request('category'))
+                <div class="mt-4">
+                    <p class="text-gray-400 text-sm">
+                        @if(request('search') && request('category'))
+                            Showing results for "{{ request('search') }}" in {{ ucfirst(request('category')) }} category
+                        @elseif(request('search'))
+                            Showing results for "{{ request('search') }}"
+                        @elseif(request('category'))
+                            Showing {{ ucfirst(request('category')) }} category
+                        @endif
+                    </p>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -54,6 +129,19 @@
 
 <!-- Music Grid start -->
 <section class="container mx-auto px-4 mb-16">
+    @if(request('search') && $music->isEmpty())
+    <div class="text-center py-12">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <p class="text-xl text-gray-400 mb-2">No results found for "{{ request('search') }}"</p>
+        <p class="text-gray-500">Try different keywords or browse all music.</p>
+        <a href="{{ route('music') }}" class="mt-4 inline-block px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+            View All Music
+        </a>
+    </div>
+    @endif
+    
     <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         @forelse ($music as $song)
             <div class="media-card rounded-2xl overflow-hidden fade-in" data-music-id="{{ $song->id }}">
@@ -165,6 +253,12 @@
             </div>
         @endforelse
     </div>
+    
+    @if($music->hasPages())
+    <div class="mt-8">
+        {{ $music->withQueryString()->links() }}
+    </div>
+    @endif
 </section>
 <!-- Music Grid end -->
 
@@ -172,115 +266,6 @@
 <x-footer />    
 <!-- Footer end -->
 </div>
-
-
-<!-- <script>
-    // Filter button interactivity
-    document.querySelectorAll('.filter-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-
-    // Smooth scroll animation
-    window.addEventListener('scroll', function() {
-        const fadeIns = document.querySelectorAll('.fade-in');
-        fadeIns.forEach(element => {
-            const elementTop = element.getBoundingClientRect().top;
-            const windowHeight = window.innerHeight;
-            if (elementTop < windowHeight - 100) {
-                element.style.opacity = '1';
-                element.style.transform = 'translateY(0)';
-            }
-        });
-    });
-
-    // Rating and Review System
-    document.addEventListener('DOMContentLoaded', function() {
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-        document.querySelectorAll('.media-card').forEach(card => {
-            const musicId = card.dataset.musicId;
-            const statusMsg = card.querySelector('.status-msg');
-
-            // Rating Logic
-            card.querySelectorAll('.star-btn').forEach(star => {
-                star.addEventListener('click', async function() {
-                    const rating = this.dataset.value;
-
-                    try {
-                        // FIXED: Use the correct endpoint from your routes
-                        const response = await fetch(`/ratings/music/${musicId}`, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({ rating: rating })
-                        });
-
-                        const data = await response.json();
-
-                        if (response.ok) {
-                            statusMsg.innerText = "Rating saved: " + rating + " Stars!";
-                            statusMsg.className = 'status-msg success';
-                            
-                            // Highlight stars
-                            card.querySelectorAll('.star-btn').forEach(s => {
-                                if (s.dataset.value <= rating) {
-                                    s.classList.add('active');
-                                } else {
-                                    s.classList.remove('active');
-                                }
-                            });
-                        } else {
-                            statusMsg.innerText = data.message || "Error saving rating";
-                            statusMsg.className = 'status-msg error';
-                        }
-                    } catch (error) {
-                        statusMsg.innerText = "Please login to rate";
-                        statusMsg.className = 'status-msg warning';
-                    }
-                });
-            });
-
-            // Review Logic
-            card.querySelector('.submit-review').addEventListener('click', async function() {
-                const comment = card.querySelector('.review-comment').value;
-                if (!comment.trim()) {
-                    alert("Please write something first!");
-                    return;
-                }
-
-                try {
-                    // FIXED: Use the correct endpoint from your routes
-                    const response = await fetch(`/reviews/music/${musicId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify({ review_text: comment })
-                    });
-
-                    const data = await response.json();
-                    
-                    if (response.ok) {
-                        alert("Review submitted for approval");
-                        card.querySelector('.review-comment').value = '';
-                    } else {
-                        alert(data.message || "Error submitting review");
-                    }
-                } catch (error) {
-                    alert("Login required to post reviews");
-                }
-            });
-        });
-    });
-</script> -->
 
 <script>
     // Filter button interactivity
@@ -454,9 +439,15 @@
                 }
             });
         });
+        
+        // Focus search input on page load if it has value
+        const searchInput = document.getElementById('musicSearch');
+        if (searchInput && searchInput.value) {
+            searchInput.focus();
+            searchInput.select();
+        }
     });
 </script>
 
 </body>
-
 </html>

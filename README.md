@@ -37,6 +37,6 @@ npm run dev
 php artisan serve
 
 <!-- Linux -->
-/opt/lampp/bin/php artisan serve
+/opt/lampp/bin/php artisan servecle
 
 

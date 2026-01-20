@@ -25,29 +25,104 @@
 <!-- NavBar end -->
 
 <!-- Page Header start -->
-        <section class="page-header">
-            <div class="container mx-auto px-4">
-                <h1 class="page-title display-font mb-4">VIDEO LIBRARY</h1>
-                <p class="text-xl text-gray-300">Watch thousands of videos from your favorite artists</p>
-            </div>
-        </section>
+<section class="page-header">
+    <div class="container mx-auto px-4">
+        <h1 class="page-title display-font mb-4">VIDEO LIBRARY</h1>
+        <p class="text-xl text-gray-300">Watch thousands of videos from your favorite artists</p>
+    </div>
+</section>
 <!-- Page Header end -->
 
 <!-- Filter Section start -->
 <section class="py-8">
     <div class="container mx-auto px-4">
         <div class="filter-section">
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <form action="{{ route('videos') }}" method="GET" class="max-w-2xl mx-auto">
+                    <div class="relative">
+                        <input 
+                            type="text" 
+                            name="search" 
+                            id="videoSearch"
+                            value="{{ request('search') }}"
+                            placeholder="Search videos by title, artist, album, year, or genre..." 
+                            class="w-full pl-12 pr-4 py-3 bg-gray-900 border border-gray-700 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+                        >
+                        <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        @if(request('search'))
+                        <a href="{{ route('videos') }}" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </a>
+                        @endif
+                    </div>
+                    <div class="mt-3 flex flex-wrap gap-2 justify-center">
+                        <button type="submit" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+                            Search
+                        </button>
+                        @if(request('search') || request('category'))
+                        <a href="{{ route('videos') }}" class="px-4 py-2 bg-gray-700 text-white rounded-full text-sm font-semibold hover:bg-gray-600 transition-colors">
+                            Clear All
+                        </a>
+                        @endif
+                    </div>
+                </form>
+            </div>
+
             <!-- Filter by Category -->
             <div class="text-center">
                 <h3 class="text-lg font-semibold mb-4">Filter by Category</h3>
                 <div class="flex flex-wrap gap-2 justify-center">
-                    <a href="{{ route('videos') }}" class="filter-btn {{ !request('category') ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">All</a>
-                    <a href="{{ route('videos', ['category' => 'album']) }}" class="filter-btn {{ request('category') == 'album' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Album</a>
-                    <a href="{{ route('videos', ['category' => 'artist']) }}" class="filter-btn {{ request('category') == 'artist' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Artist</a>
-                    <a href="{{ route('videos', ['category' => 'year']) }}" class="filter-btn {{ request('category') == 'year' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Year</a>
-                    <a href="{{ route('videos', ['category' => 'genre']) }}" class="filter-btn {{ request('category') == 'genre' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Genre</a>
-                    <a href="{{ route('videos', ['category' => 'language']) }}" class="filter-btn {{ request('category') == 'language' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">Language</a>
+                    @php
+                        $currentCategory = request('category');
+                        $currentSearch = request('search');
+                    @endphp
+                    
+                    <a href="{{ route('videos') }}{{ $currentSearch ? '?search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ !$currentCategory ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        All
+                    </a>
+                    <a href="{{ route('videos') }}?category=album{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'album' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Album
+                    </a>
+                    <a href="{{ route('videos') }}?category=artist{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'artist' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Artist
+                    </a>
+                    <a href="{{ route('videos') }}?category=year{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'year' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Year
+                    </a>
+                    <a href="{{ route('videos') }}?category=genre{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'genre' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Genre
+                    </a>
+                    <a href="{{ route('videos') }}?category=language{{ $currentSearch ? '&search=' . $currentSearch : '' }}" 
+                       class="filter-btn {{ $currentCategory == 'language' ? 'active' : '' }} px-4 py-2 rounded-full text-sm font-semibold">
+                        Language
+                    </a>
                 </div>
+                
+                @if(request('search') || request('category'))
+                <div class="mt-4">
+                    <p class="text-gray-400 text-sm">
+                        @if(request('search') && request('category'))
+                            Showing results for "{{ request('search') }}" in {{ ucfirst(request('category')) }} category
+                        @elseif(request('search'))
+                            Showing results for "{{ request('search') }}"
+                        @elseif(request('category'))
+                            Showing {{ ucfirst(request('category')) }} category
+                        @endif
+                    </p>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -58,6 +133,19 @@
 <!-- Video Grid start -->
 <section class="py-8 pb-16">
     <div class="container mx-auto px-4">
+        @if(request('search') && $videos->isEmpty())
+        <div class="text-center py-12">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <p class="text-xl text-gray-400 mb-2">No results found for "{{ request('search') }}"</p>
+            <p class="text-gray-500">Try different keywords or browse all videos.</p>
+            <a href="{{ route('videos') }}" class="mt-4 inline-block px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full text-sm font-semibold hover:opacity-90 transition-opacity">
+                View All Videos
+            </a>
+        </div>
+        @endif
+        
         @if($videos->count() > 0)
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach($videos as $video)
@@ -170,7 +258,14 @@
                     </div>
                 @endforeach
             </div>
-        @else
+            
+            @if($videos->hasPages())
+            <div class="mt-8">
+                {{ $videos->withQueryString()->links() }}
+            </div>
+            @endif
+            
+        @elseif(!request('search'))
             <div class="text-center py-12">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -368,6 +463,13 @@
                 }
             });
         });
+        
+        // Focus search input on page load if it has value
+        const searchInput = document.getElementById('videoSearch');
+        if (searchInput && searchInput.value) {
+            searchInput.focus();
+            searchInput.select();
+        }
     });
 </script>
 

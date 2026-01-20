@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin; 
+namespace App\Http\Controllers\Admin;  // Note: This is in Admin namespace
 
 use App\Http\Controllers\Controller;
 use App\Models\Video;
@@ -65,7 +65,7 @@ public function index(Request $request)
         $query->orderBy('created_at', 'desc');
     }
     
-    $videos = $query->paginate(12);
+    $videos = $query->get();
     
     return view('video', compact('videos'));
 }
@@ -87,7 +87,7 @@ public function index(Request $request)
             'duration'  => 'required|string|max:20',
             'description' => 'nullable|string',
 
-            'videoFile' => 'required|file|mimes:mp4,avi,mov,mkv|max:614400', // 600MB in KB
+            'videoFile' => 'required|file|mimes:mp4,avi,mov,mkv|max:512000', // 500MB
             'thumbnail' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120', // 5MB
         ]);
 

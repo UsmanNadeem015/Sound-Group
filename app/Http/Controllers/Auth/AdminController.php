@@ -91,6 +91,18 @@ public function storeMusic(Request $request)
         );
     }
 
+    // Handle custom year if selected
+if ($request->year === 'custom' && $request->has('custom_year')) {
+    $validatedData['year'] = $request->custom_year;
+    
+    // Also auto-create the year category in database
+    $category = Category::firstOrCreate(
+        ['name' => $request->custom_year, 'type' => 'year'],
+        ['slug' => Str::slug($request->custom_year), 'is_active' => true]
+    );
+}
+
+
     // Upload thumbnail
     $thumbnailPath = null;
     if ($request->hasFile('thumbnail')) {
@@ -210,50 +222,85 @@ public function storeVideo(Request $request)
     // Validate
     $validatedData = $request->validate([
         'thumbnail' => 'required|image|mimes:jpeg,png,jpg,gif,webp|max:5120',
-        'videoFile' => 'required|mimes:mp4,avi,mov,mkv|max:512000',
+        'videoFile' => 'required|mimes:mp4,avi,mov,mkv|max:614400',
         'videoName' => 'required|string|max:255',
         'artist' => 'required|string|max:255',
         'album' => 'required|string|max:255',
-        'year' => 'required|digits:4',
+        'year' => 'required|string|max:4',
         'genre' => 'required|string',
         'language' => 'required|string',
         'duration' => 'required|string|max:10',
         'description' => 'nullable|string',
+        'custom_year' => 'nullable|digits:4|integer|min:1900|max:' . date('Y'),
     ]);
+
+    // Handle custom year if selected
+    $year = $request->year;
+    if ($request->has('custom_year') && !empty($request->custom_year)) {
+        $year = $request->custom_year;
+        
+        // Also auto-create the year category in database
+        \App\Models\Category::firstOrCreate([
+            'name' => $year,
+            'type' => 'year'
+        ], [
+            'slug' => $year,
+            'is_active' => true,
+            'description' => 'Release year'
+        ]);
+    }
 
     // Handle custom genre if selected
     if ($request->genre === 'custom' && $request->has('custom_genre')) {
         $validatedData['genre'] = $request->custom_genre;
         
         // Also auto-create the category in database
-        $category = Category::firstOrCreate(
-            ['name' => $request->custom_genre, 'type' => 'genre'],
-            ['slug' => Str::slug($request->custom_genre), 'is_active' => true]
-        );
+        \App\Models\Category::firstOrCreate([
+            'name' => $request->custom_genre,
+            'type' => 'genre'
+        ], [
+            'slug' => \Illuminate\Support\Str::slug($request->custom_genre),
+            'is_active' => true,
+            'description' => 'Custom genre'
+        ]);
     }
 
-    // Rest of your existing storeVideo code...
+    // Handle custom language if selected
+    if ($request->language === 'custom' && $request->has('custom_language')) {
+        $validatedData['language'] = $request->custom_language;
+        
+        // Also auto-create the category in database
+        \App\Models\Category::firstOrCreate([
+            'name' => $request->custom_language,
+            'type' => 'language'
+        ], [
+            'slug' => \Illuminate\Support\Str::slug($request->custom_language),
+            'is_active' => true,
+            'description' => 'Custom language'
+        ]);
+    }
+
     // Upload thumbnail
     $thumbnailPath = null;
     if ($request->hasFile('thumbnail')) {
         $thumbnail = $request->file('thumbnail');
-        $thumbnailName = time() . '_' . Str::slug($validatedData['videoName']) . '.' . $thumbnail->getClientOriginalExtension();
+        $thumbnailName = time() . '_' . \Illuminate\Support\Str::slug($validatedData['videoName']) . '.' . $thumbnail->getClientOriginalExtension();
         $thumbnailPath = $thumbnail->storeAs('images/videos', $thumbnailName, 'public');
     }
 
     // Upload video file
     $videoFile = $request->file('videoFile');
-    $videoFileName = time() . '_' . Str::slug($validatedData['videoName']) . '.' . $videoFile->getClientOriginalExtension();
+    $videoFileName = time() . '_' . \Illuminate\Support\Str::slug($validatedData['videoName']) . '.' . $videoFile->getClientOriginalExtension();
     $videoFilePath = $videoFile->storeAs('videos', $videoFileName, 'public');
 
     // Create video record
-    $video = Video::create([
+    $video = \App\Models\Video::create([
         'title' => $validatedData['videoName'],
-        'slug' => Str::slug($validatedData['videoName']),
+        'slug' => \Illuminate\Support\Str::slug($validatedData['videoName']),
         'description' => $validatedData['description'] ?? null,
         'artist' => $validatedData['artist'],
         'album' => $validatedData['album'],
-        'year' => $validatedData['year'],
+        'year' => $year, // Use the processed year
         'genre' => $validatedData['genre'],
         'language' => $validatedData['language'],
         'duration' => $validatedData['duration'],
@@ -262,9 +309,6 @@ public function storeVideo(Request $request)
         'is_new' => true,
         'is_active' => true,
     ]);
-
-    // Attach categories
-    $this->attachVideoCategories($video, $validatedData);
 
     return redirect()->route('admin.dashboard')
         ->with('success', 'Video added successfully!');
@@ -527,21 +571,36 @@ public function manageCategories()
  */
 public function addCategory()
 {
-    // Remove 'artist' and 'album' from the types
+    // Keep all types since your form has them
     $categoryTypes = ['genre', 'year', 'language'];
     return view('addcategory', compact('categoryTypes'));
 }
-
 /**
  * Store new category
  */
 public function storeCategory(Request $request)
 {
     $validatedData = $request->validate([
-        'name' => 'required|string|max:255|unique:categories,name',
+        'name' => 'required|string|max:255',
         'type' => 'required|string|in:genre,year,artist,album,language',
         'description' => 'nullable|string',
     ]);
+
+    // For year type, validate it's a valid year
+    if ($request->type === 'year') {
+        $request->validate([
+            'name' => 'required|digits:4|integer|min:1900|max:' . date('Y'),
+        ]);
+    }
+
+    // Check if category already exists
+    $existingCategory = Category::where('name', $request->name)
+        ->where('type', $request->type)
+        ->first();
+
+    if ($existingCategory) {
+        return back()->withErrors(['name' => 'This category already exists.']);
+    }
 
     Category::create([
         'name' => $validatedData['name'],
@@ -598,7 +657,7 @@ public function approveReview($id)
     return redirect()->back()->with('success', 'Review approved successfully!');
 }
 
-// Add this method to delete reviews:
+// delete reviews:
 public function deleteReview($id)
 {
     $review = \App\Models\Review::findOrFail($id);
@@ -606,6 +665,9 @@ public function deleteReview($id)
     
     return redirect()->back()->with('success', 'Review deleted successfully!');
 }
+
+
+
 
 
 }

@@ -11,7 +11,7 @@ use App\Http\Controllers\MusicFetchController;
 use App\Http\Controllers\VideoFetchController;
 use App\Http\Controllers\Api\RatingController;
 use App\Http\Controllers\Api\ReviewController;
-use App\Http\Controllers\Admin\VideoController;
+// use App\Http\Controllers\Admin\VideoController;
 
 // Main Pages
 Route::get('/', function () {
@@ -29,8 +29,9 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/Music', [MusicFetchController::class, 'index'])->name('music');
-// Route::get('/Videos', [VideoFetchController::class, 'index'])->name('videos');
-Route::get('/Videos', [VideoController::class, 'index'])->name('videos');
+Route::get('/Videos', [VideoFetchController::class, 'index'])->name('videos');
+// Route::get('/Videos', [VideoController::class, 'index'])->name('videos');
+
 Route::get('/About', function () {
     return view('about');
 })->name('about');
@@ -106,5 +107,11 @@ Route::middleware(['auth', 'role:admin'])->prefix('Dashboard/Admin')->group(func
     Route::get('/Manage-Reviews', [AdminController::class, 'manageReviews'])->name('admin.managereviews');
     Route::post('/Approve-Review/{id}', [AdminController::class, 'approveReview'])->name('admin.approve-review');
     Route::delete('/Delete-Review/{id}', [AdminController::class, 'deleteReview'])->name('admin.delete-review');
+
+// Add these routes to your admin routes group
+Route::post('/Dashboard/Admin/Store-Music', [MusicController::class, 'store'])->name('admin.storemusic');
+Route::get('/Dashboard/Admin/Edit-Music/{id}', [MusicController::class, 'edit'])->name('admin.editmusic');
+Route::put('/Dashboard/Admin/Update-Music/{id}', [MusicController::class, 'update'])->name('admin.updatemusic');
+Route::delete('/Dashboard/Admin/Delete-Music/{id}', [MusicController::class, 'destroy'])->name('admin.deletemusic');
 
     });

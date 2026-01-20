@@ -29,6 +29,12 @@ class ReviewController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Add edit information to each review
+        $reviews->each(function ($review) {
+            $review->can_edit = $review->created_at->diffInHours(now()) <= 24;
+            $review->remaining_edit_time = max(0, 24 - $review->created_at->diffInHours(now()));
+        });
+
         return response()->json([
             'success' => true,
             'data' => $reviews
@@ -53,13 +59,19 @@ class ReviewController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        // Add edit information to each review
+        $reviews->each(function ($review) {
+            $review->can_edit = $review->created_at->diffInHours(now()) <= 24;
+            $review->remaining_edit_time = max(0, 24 - $review->created_at->diffInHours(now()));
+        });
+
         return response()->json([
             'success' => true,
             'data' => $reviews
         ]);
     }
 
-    // Add review to music
+    // Add or edit review to music
     public function addMusicReview(Request $request, $musicId)
     {
         $music = Music::find($musicId);
@@ -90,18 +102,40 @@ class ReviewController extends Controller
             ->first();
 
         if ($existingReview) {
+            // Check if review can be edited (within 24 hours)
+            $canEdit = $existingReview->created_at->diffInHours(now()) <= 24;
+            
+            if (!$canEdit) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only edit your review within 24 hours of posting'
+                ], 403);
+            }
+
+            // Update existing review
+            $existingReview->update([
+                'review_text' => $request->review_text,
+                'is_approved' => false, // Needs re-approval
+                'edited_at' => now(),
+                'edit_count' => ($existingReview->edit_count ?? 0) + 1
+            ]);
+
             return response()->json([
-                'success' => false,
-                'message' => 'You have already reviewed this music'
-            ], 409);
+                'success' => true,
+                'message' => 'Review updated successfully. Waiting for admin approval.',
+                'data' => $existingReview->load('user:id,name')
+            ]);
         }
 
+        // Create new review
         $review = Review::create([
             'reviewable_type' => Music::class,
             'reviewable_id' => $musicId,
             'user_id' => $request->user()->id,
             'review_text' => $request->review_text,
             'is_approved' => false, // Needs admin approval
+            'edited_at' => null,
+            'edit_count' => 0
         ]);
 
         return response()->json([
@@ -111,7 +145,7 @@ class ReviewController extends Controller
         ], 201);
     }
 
-    // Add review to video
+    // Add or edit review to video
     public function addVideoReview(Request $request, $videoId)
     {
         $video = Video::find($videoId);
@@ -142,18 +176,40 @@ class ReviewController extends Controller
             ->first();
 
         if ($existingReview) {
+            // Check if review can be edited (within 24 hours)
+            $canEdit = $existingReview->created_at->diffInHours(now()) <= 24;
+            
+            if (!$canEdit) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You can only edit your review within 24 hours of posting'
+                ], 403);
+            }
+
+            // Update existing review
+            $existingReview->update([
+                'review_text' => $request->review_text,
+                'is_approved' => false, // Needs re-approval
+                'edited_at' => now(),
+                'edit_count' => ($existingReview->edit_count ?? 0) + 1
+            ]);
+
             return response()->json([
-                'success' => false,
-                'message' => 'You have already reviewed this video'
-            ], 409);
+                'success' => true,
+                'message' => 'Review updated successfully. Waiting for admin approval.',
+                'data' => $existingReview->load('user:id,name')
+            ]);
         }
 
+        // Create new review
         $review = Review::create([
             'reviewable_type' => Video::class,
             'reviewable_id' => $videoId,
             'user_id' => $request->user()->id,
             'review_text' => $request->review_text,
-            'is_approved' => false,
+            'is_approved' => false, // Needs admin approval
+            'edited_at' => null,
+            'edit_count' => 0
         ]);
 
         return response()->json([
@@ -163,7 +219,7 @@ class ReviewController extends Controller
         ], 201);
     }
 
-    // Update review
+    // Update specific review by ID
     public function update(Request $request, $id)
     {
         $review = Review::find($id);
@@ -183,6 +239,16 @@ class ReviewController extends Controller
             ], 403);
         }
 
+        // Check if review can be edited (within 24 hours)
+        $canEdit = $review->created_at->diffInHours(now()) <= 24;
+        
+        if (!$canEdit) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You can only edit your review within 24 hours of posting'
+            ], 403);
+        }
+
         $validator = Validator::make($request->all(), [
             'review_text' => 'required|string|min:10|max:1000',
         ]);
@@ -198,11 +264,13 @@ class ReviewController extends Controller
         $review->update([
             'review_text' => $request->review_text,
             'is_approved' => false, // Needs re-approval
+            'edited_at' => now(),
+            'edit_count' => ($review->edit_count ?? 0) + 1
         ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Review updated successfully',
+            'message' => 'Review updated successfully. Waiting for admin approval.',
             'data' => $review
         ]);
     }
@@ -232,6 +300,46 @@ class ReviewController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Review deleted successfully'
+        ]);
+    }
+
+    // Get user's review for specific music
+    public function getUserMusicReview(Request $request, $musicId)
+    {
+        $review = Review::where('reviewable_type', Music::class)
+            ->where('reviewable_id', $musicId)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if ($review) {
+            // Add edit information
+            $review->can_edit = $review->created_at->diffInHours(now()) <= 24;
+            $review->remaining_edit_time = max(0, 24 - $review->created_at->diffInHours(now()));
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $review
+        ]);
+    }
+
+    // Get user's review for specific video
+    public function getUserVideoReview(Request $request, $videoId)
+    {
+        $review = Review::where('reviewable_type', Video::class)
+            ->where('reviewable_id', $videoId)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if ($review) {
+            // Add edit information
+            $review->can_edit = $review->created_at->diffInHours(now()) <= 24;
+            $review->remaining_edit_time = max(0, 24 - $review->created_at->diffInHours(now()));
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $review
         ]);
     }
 

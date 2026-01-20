@@ -400,7 +400,7 @@ body {
     z-index: 100 !important;
 }
 
-//* ========== MUSIC PLAYER STYLES ========== */
+/* ========== MUSIC PLAYER STYLES ========== */
 /* Custom player-hidden class to avoid conflict with Tailwind */
 .player-hidden {
     display: none !important;

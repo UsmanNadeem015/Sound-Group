@@ -63,14 +63,68 @@ Route::middleware(['auth'])->group(function () {
 
 // Rating and Review Routes
 Route::middleware(['auth'])->group(function () {
-    // Music Rating & Reviews
+    // ========== MUSIC RATINGS ==========
+    // Add/update rating for music
     Route::post('/ratings/music/{id}', [RatingController::class, 'rateMusic']);
-    Route::post('/reviews/music/{id}', [ReviewController::class, 'addMusicReview']);
+    Route::put('/ratings/music/{id}', [RatingController::class, 'rateMusic']); // For editing
     
-    // Video Rating & Reviews
+    // Get user's rating for music
+    Route::get('/ratings/music/{id}/user', [RatingController::class, 'getUserMusicRating']);
+    
+    // Remove rating for music
+    Route::delete('/ratings/music/{id}', [RatingController::class, 'removeMusicRating']);
+    
+    // Get average rating for music
+    Route::get('/ratings/music/{id}/average', [RatingController::class, 'getMusicAverageRating']);
+    
+    // ========== VIDEO RATINGS ==========
+    // Add/update rating for video
     Route::post('/ratings/video/{id}', [RatingController::class, 'rateVideo']);
+    Route::put('/ratings/video/{id}', [RatingController::class, 'rateVideo']); // For editing
+    
+    // Get user's rating for video
+    Route::get('/ratings/video/{id}/user', [RatingController::class, 'getUserVideoRating']);
+    
+    // Remove rating for video
+    Route::delete('/ratings/video/{id}', [RatingController::class, 'removeVideoRating']);
+    
+    // Get average rating for video
+    Route::get('/ratings/video/{id}/average', [RatingController::class, 'getVideoAverageRating']);
+    
+    // ========== MUSIC REVIEWS ==========
+    // Get reviews for music
+    Route::get('/reviews/music/{id}', [ReviewController::class, 'getMusicReviews']);
+    
+    // Add/edit review for music
+    Route::post('/reviews/music/{id}', [ReviewController::class, 'addMusicReview']);
+    Route::put('/reviews/music/{id}', [ReviewController::class, 'addMusicReview']); // For editing
+    
+    // Get user's review for music
+    Route::get('/reviews/music/{id}/user', [ReviewController::class, 'getUserMusicReview']);
+    
+    // ========== VIDEO REVIEWS ==========
+    // Get reviews for video
+    Route::get('/reviews/video/{id}', [ReviewController::class, 'getVideoReviews']);
+    
+    // Add/edit review for video
     Route::post('/reviews/video/{id}', [ReviewController::class, 'addVideoReview']);
+    Route::put('/reviews/video/{id}', [ReviewController::class, 'addVideoReview']); // For editing
+    
+    // Get user's review for video
+    Route::get('/reviews/video/{id}/user', [ReviewController::class, 'getUserVideoReview']);
+    
+    // ========== GENERAL REVIEW ROUTES ==========
+    // Update specific review by ID
+    Route::put('/reviews/{id}', [ReviewController::class, 'update']);
+    
+    // Delete review by ID
+    Route::delete('/reviews/{id}', [ReviewController::class, 'destroy']);
+    
+    // Approve review (Admin only)
+    Route::post('/reviews/{id}/approve', [ReviewController::class, 'approve'])->middleware('role:admin');
 });
+
+
 
 // Admin Dashboard Routes
 Route::middleware(['auth', 'role:admin'])->prefix('Dashboard/Admin')->name('admin.')->group(function () {

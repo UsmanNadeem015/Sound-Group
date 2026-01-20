@@ -16,16 +16,19 @@ class Review extends Model
         'user_id',
         'review_text',  // Keep as review_text for consistency with migration
         'is_approved',
+        'edited_at',
+        'edit_count'
     ];
 
     protected $casts = [
         'is_approved' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'edited_at' => 'datetime'
     ];
 
     // Appended attributes
-    protected $appends = ['excerpt', 'time_ago'];
+    protected $appends = ['excerpt', 'time_ago', 'can_edit', 'remaining_edit_time'];
 
     // Polymorphic relationship (can review music OR video)
     public function reviewable()
@@ -49,6 +52,34 @@ class Review extends Model
     public function getTimeAgoAttribute()
     {
         return $this->created_at->diffForHumans();
+    }
+
+    // Check if review can be edited (within 24 hours)
+    public function getCanEditAttribute()
+    {
+        return $this->created_at->diffInHours(now()) <= 24;
+    }
+
+    // Get remaining edit time in hours
+    public function getRemainingEditTimeAttribute()
+    {
+        $hoursLeft = 24 - $this->created_at->diffInHours(now());
+        return max(0, $hoursLeft);
+    }
+
+    // Get formatted edit time (e.g., "5 hours remaining")
+    public function getFormattedRemainingTimeAttribute()
+    {
+        $hours = $this->remaining_edit_time;
+        if ($hours >= 24) {
+            $days = floor($hours / 24);
+            return $days . ' day' . ($days > 1 ? 's' : '') . ' remaining';
+        } elseif ($hours >= 1) {
+            return floor($hours) . ' hour' . (floor($hours) > 1 ? 's' : '') . ' remaining';
+        } else {
+            $minutes = floor($hours * 60);
+            return $minutes . ' minute' . ($minutes > 1 ? 's' : '') . ' remaining';
+        }
     }
 
     // Scope for approved reviews
@@ -88,6 +119,18 @@ class Review extends Model
         return $query->orderBy('created_at', 'desc')->limit($limit);
     }
 
+    // Get edited reviews
+    public function scopeEdited($query)
+    {
+        return $query->whereNotNull('edited_at');
+    }
+
+    // Get unedited reviews
+    public function scopeUnedited($query)
+    {
+        return $query->whereNull('edited_at');
+    }
+
     // Approve this review
     public function approve()
     {
@@ -99,6 +142,18 @@ class Review extends Model
     public function reject()
     {
         $this->update(['is_approved' => false]);
+        return $this;
+    }
+
+    // Edit review (update with edit tracking)
+    public function editReview($reviewText)
+    {
+        $this->update([
+            'review_text' => $reviewText,
+            'is_approved' => false, // Needs re-approval after edit
+            'edited_at' => now(),
+            'edit_count' => $this->edit_count + 1
+        ]);
         return $this;
     }
 
@@ -130,5 +185,39 @@ class Review extends Model
     public function getItemTypeAttribute()
     {
         return $this->isForMusic() ? 'Music' : ($this->isForVideo() ? 'Video' : 'Unknown');
+    }
+
+    // Get edit information
+    public function getEditInfoAttribute()
+    {
+        if ($this->edited_at) {
+            return [
+                'last_edited' => $this->edited_at->diffForHumans(),
+                'edit_count' => $this->edit_count,
+                'can_edit' => $this->can_edit,
+                'remaining_time' => $this->formatted_remaining_time
+            ];
+        }
+        
+        return [
+            'last_edited' => null,
+            'edit_count' => $this->edit_count,
+            'can_edit' => $this->can_edit,
+            'remaining_time' => $this->formatted_remaining_time
+        ];
+    }
+
+    // Reset edit count (for admin purposes)
+    public function resetEditCount()
+    {
+        $this->update(['edit_count' => 0]);
+        return $this;
+    }
+
+    // Check if review was recently edited (within last hour)
+    public function getRecentlyEditedAttribute()
+    {
+        if (!$this->edited_at) return false;
+        return $this->edited_at->diffInHours(now()) < 1;
     }
 }

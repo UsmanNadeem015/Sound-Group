@@ -154,4 +154,86 @@ class RatingController extends Controller
             'data' => $rating
         ]);
     }
+
+    // Remove user's rating for music
+    public function removeMusicRating(Request $request, $musicId)
+    {
+        $rating = Rating::where('ratable_type', Music::class)
+            ->where('ratable_id', $musicId)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if (!$rating) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Rating not found'
+            ], 404);
+        }
+
+        $rating->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rating removed successfully'
+        ]);
+    }
+
+    // Remove user's rating for video
+    public function removeVideoRating(Request $request, $videoId)
+    {
+        $rating = Rating::where('ratable_type', Video::class)
+            ->where('ratable_id', $videoId)
+            ->where('user_id', $request->user()->id)
+            ->first();
+
+        if (!$rating) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Rating not found'
+            ], 404);
+        }
+
+        $rating->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Rating removed successfully'
+        ]);
+    }
+
+    // Get average rating for music
+    public function getMusicAverageRating($musicId)
+    {
+        $averageRating = Rating::where('ratable_type', Music::class)
+            ->where('ratable_id', $musicId)
+            ->avg('rating');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'average_rating' => round($averageRating ?? 0, 1),
+                'total_ratings' => Rating::where('ratable_type', Music::class)
+                    ->where('ratable_id', $musicId)
+                    ->count()
+            ]
+        ]);
+    }
+
+    // Get average rating for video
+    public function getVideoAverageRating($videoId)
+    {
+        $averageRating = Rating::where('ratable_type', Video::class)
+            ->where('ratable_id', $videoId)
+            ->avg('rating');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'average_rating' => round($averageRating ?? 0, 1),
+                'total_ratings' => Rating::where('ratable_type', Video::class)
+                    ->where('ratable_id', $videoId)
+                    ->count()
+            ]
+        ]);
+    }
 }

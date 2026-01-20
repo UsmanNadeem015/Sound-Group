@@ -399,3 +399,41 @@ body {
     pointer-events: auto !important;
     z-index: 100 !important;
 }
+
+/* Ensure music player stays on top and is visible */
+#music-player-ui {
+    position: relative;
+    z-index: 99999 !important;
+}
+
+#music-player-ui .fixed {
+    position: fixed !important;
+    z-index: 99999 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: translateY(0) !important;
+}
+
+/* Force show when .hidden is removed */
+#music-player-ui .fixed:not(.hidden) {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* Override any hidden classes */
+.hidden {
+    display: none !important;
+}
+
+#music-player-ui .fixed.hidden {
+    display: none !important;
+}
+
+#music-player-ui .fixed:not(.hidden) {
+    display: flex !important;
+}

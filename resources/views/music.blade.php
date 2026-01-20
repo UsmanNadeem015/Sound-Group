@@ -235,12 +235,24 @@
                         </div>
                     @endif
 
-                    <button class="btn btn-gradient btn-sm w-full text-white hover:scale-105 transition-transform mt-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
-                        </svg>
-                        Play Now
-                    </button>
+@if($song->file_path && file_exists(public_path('storage/' . $song->file_path)))
+    <button class="play-music-btn btn btn-gradient btn-sm w-full text-white hover:scale-105 transition-transform mt-4" 
+            data-audio-url="{{ asset('storage/' . $song->file_path) }}"
+            data-music-title="{{ $song->title }}"
+            data-music-artist="{{ $song->artist }}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+        </svg>
+        Play Now
+    </button>
+@else
+    <button class="btn btn-gradient btn-sm w-full text-white opacity-50 cursor-not-allowed mt-4" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+        </svg>
+        Audio Not Available
+    </button>
+@endif
                 </div>
             </div>
         @empty
@@ -447,6 +459,253 @@
             searchInput.select();
         }
     });
+
+    // Music Player Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Create audio player element
+    const audioPlayer = document.createElement('audio');
+    audioPlayer.id = 'global-audio-player';
+    audioPlayer.style.display = 'none';
+    document.body.appendChild(audioPlayer);
+    
+// Create music player UI (ULTRA SIMPLE MOBILE-FIRST)
+const playerUI = document.createElement('div');
+playerUI.id = 'music-player-ui';
+playerUI.innerHTML = `
+    <div class="fixed bottom-0 left-0 right-0 bg-gray-900 border-t border-gray-800 p-3 z-50 hidden">
+        <div class="flex items-center justify-between">
+            <!-- Song Info (Truncated for mobile) -->
+            <div class="flex items-center space-x-3 flex-1 min-w-0">
+                <div class="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h4 id="now-playing-title" class="font-semibold text-white text-sm truncate">No song playing</h4>
+                    <p id="now-playing-artist" class="text-xs text-gray-400 truncate">Select a song</p>
+                </div>
+            </div>
+            
+            <!-- Controls -->
+            <div class="flex items-center space-x-2 flex-shrink-0">
+                <button id="play-pause-btn" class="p-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-full hover:opacity-90">
+                    <svg id="play-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" />
+                    </svg>
+                    <svg id="pause-icon" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 hidden" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+                
+                <button id="close-player-btn" class="p-1 text-gray-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Progress Bar (Below on mobile) -->
+        <div class="mt-2">
+            <div class="flex items-center space-x-2">
+                <span class="text-xs text-gray-400 flex-shrink-0" id="current-time">0:00</span>
+                <input type="range" id="seek-slider" min="0" max="100" value="0" class="flex-1 h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer">
+                <span class="text-xs text-gray-400 flex-shrink-0" id="duration">0:00</span>
+            </div>
+        </div>
+    </div>
+`;
+    document.body.appendChild(playerUI);
+    
+    // Get DOM elements
+    const playerUIElement = document.getElementById('music-player-ui');
+    const playPauseBtn = document.getElementById('play-pause-btn');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const closePlayerBtn = document.getElementById('close-player-btn');
+    const seekSlider = document.getElementById('seek-slider');
+    const volumeSlider = document.getElementById('volume-slider');
+    const muteBtn = document.getElementById('mute-btn');
+    const volumeIcon = document.getElementById('volume-icon');
+    const muteIcon = document.getElementById('mute-icon');
+    const currentTimeEl = document.getElementById('current-time');
+    const durationEl = document.getElementById('duration');
+    const nowPlayingTitle = document.getElementById('now-playing-title');
+    const nowPlayingArtist = document.getElementById('now-playing-artist');
+    
+    // Store current playing music
+    let currentAudioUrl = '';
+    let isPlaying = false;
+    
+    // Format time (seconds to MM:SS)
+    function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60);
+        return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+    
+    // Update time display
+    function updateTime() {
+        currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+        durationEl.textContent = formatTime(audioPlayer.duration);
+        
+        if (audioPlayer.duration) {
+            const progress = (audioPlayer.currentTime / audioPlayer.duration) * 100;
+            seekSlider.value = progress;
+        }
+    }
+    
+    // Play music
+    function playMusic(audioUrl, title, artist) {
+        if (currentAudioUrl !== audioUrl) {
+            audioPlayer.src = audioUrl;
+            currentAudioUrl = audioUrl;
+            nowPlayingTitle.textContent = title;
+            nowPlayingArtist.textContent = artist;
+        }
+        
+        audioPlayer.play()
+            .then(() => {
+                isPlaying = true;
+                playIcon.classList.add('hidden');
+                pauseIcon.classList.remove('hidden');
+                playerUIElement.querySelector('.fixed').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error playing audio:', error);
+                alert('Error playing audio. Please check if the file exists.');
+            });
+    }
+    
+    // Toggle play/pause
+    function togglePlayPause() {
+        if (!currentAudioUrl) return;
+        
+        if (isPlaying) {
+            audioPlayer.pause();
+            playIcon.classList.remove('hidden');
+            pauseIcon.classList.add('hidden');
+        } else {
+            audioPlayer.play();
+            playIcon.classList.add('hidden');
+            pauseIcon.classList.remove('hidden');
+        }
+        isPlaying = !isPlaying;
+    }
+    
+    // Event listeners for play buttons
+    document.querySelectorAll('.play-music-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            const audioUrl = this.getAttribute('data-audio-url');
+            const title = this.getAttribute('data-music-title');
+            const artist = this.getAttribute('data-music-artist');
+            playMusic(audioUrl, title, artist);
+        });
+    });
+    
+    // Audio player events
+    audioPlayer.addEventListener('timeupdate', updateTime);
+    audioPlayer.addEventListener('loadedmetadata', function() {
+        updateTime();
+    });
+    audioPlayer.addEventListener('ended', function() {
+        isPlaying = false;
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+    });
+    
+    // Player controls
+    playPauseBtn.addEventListener('click', togglePlayPause);
+    
+    closePlayerBtn.addEventListener('click', function() {
+        audioPlayer.pause();
+        isPlaying = false;
+        playIcon.classList.remove('hidden');
+        pauseIcon.classList.add('hidden');
+        playerUIElement.querySelector('.fixed').classList.add('hidden');
+    });
+    
+    // Seek functionality
+    seekSlider.addEventListener('input', function() {
+        if (audioPlayer.duration) {
+            const seekTime = (this.value / 100) * audioPlayer.duration;
+            audioPlayer.currentTime = seekTime;
+        }
+    });
+    
+    // Volume functionality
+    volumeSlider.addEventListener('input', function() {
+        audioPlayer.volume = this.value / 100;
+        if (audioPlayer.volume === 0) {
+            volumeIcon.classList.add('hidden');
+            muteIcon.classList.remove('hidden');
+        } else {
+            volumeIcon.classList.remove('hidden');
+            muteIcon.classList.add('hidden');
+        }
+    });
+    
+    // Mute functionality
+    muteBtn.addEventListener('click', function() {
+        if (audioPlayer.volume > 0) {
+            audioPlayer.volume = 0;
+            volumeSlider.value = 0;
+            volumeIcon.classList.add('hidden');
+            muteIcon.classList.remove('hidden');
+        } else {
+            audioPlayer.volume = 0.8;
+            volumeSlider.value = 80;
+            volumeIcon.classList.remove('hidden');
+            muteIcon.classList.add('hidden');
+        }
+    });
+    
+    // Initialize volume
+    audioPlayer.volume = volumeSlider.value / 100;
+    
+    // Add keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.code === 'Space' && currentAudioUrl) {
+            e.preventDefault();
+            togglePlayPause();
+        }
+        
+        // Left/Right arrow for seek
+        if (e.code === 'ArrowLeft' && currentAudioUrl) {
+            e.preventDefault();
+            audioPlayer.currentTime = Math.max(0, audioPlayer.currentTime - 5);
+        }
+        
+        if (e.code === 'ArrowRight' && currentAudioUrl) {
+            e.preventDefault();
+            audioPlayer.currentTime = Math.min(audioPlayer.duration, audioPlayer.currentTime + 5);
+        }
+        
+        // Up/Down arrow for volume
+        if (e.code === 'ArrowUp' && currentAudioUrl) {
+            e.preventDefault();
+            const newVolume = Math.min(100, audioPlayer.volume * 100 + 10);
+            audioPlayer.volume = newVolume / 100;
+            volumeSlider.value = newVolume;
+            if (newVolume > 0) {
+                volumeIcon.classList.remove('hidden');
+                muteIcon.classList.add('hidden');
+            }
+        }
+        
+        if (e.code === 'ArrowDown' && currentAudioUrl) {
+            e.preventDefault();
+            const newVolume = Math.max(0, audioPlayer.volume * 100 - 10);
+            audioPlayer.volume = newVolume / 100;
+            volumeSlider.value = newVolume;
+            if (newVolume === 0) {
+                volumeIcon.classList.add('hidden');
+                muteIcon.classList.remove('hidden');
+            }
+        }
+    });
+});
 </script>
 
 </body>
